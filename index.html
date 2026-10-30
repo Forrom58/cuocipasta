@@ -39,7 +39,7 @@ button.spento{opacity:.35;border-style:dashed}
 
 <section id="home">
   <h1>CuociPasta</h1>
-  <p class="nota" id="versione">Versione 14</p>
+  <p class="nota" id="versione">Versione 16</p>
   <button class="primario" id="bParla">🎤 Parla: marca e pasta</button>
   <button class="primario" id="bScan">📷 Inquadra il codice a barre</button>
   <button id="bTimerLibero">⏱ Timer libero</button>
@@ -122,13 +122,85 @@ button.spento{opacity:.35;border-style:dashed}
 const $=id=>document.getElementById(id);
 const CHIAVE='cuocipasta.v1';
 // Tempi verificati su schede prodotto (ott. 2026). Controllare sempre la propria confezione.
+// Tempi letti dai siti ufficiali italiani delle marche il 30/10/2026 (campo fonte). Controllare sempre la confezione.
+const SEED_VER=3;
 const SEED=[
-  {id:'s1',marca:'Barilla',nome:'Spaghetti n.5',cottura:9,alDente:null,note:''},
-  {id:'s2',marca:'Barilla',nome:'Penne Rigate n.73',cottura:11,alDente:null,note:''},
-  {id:'s3',marca:'De Cecco',nome:'Spaghetti n.12',cottura:12,alDente:10,note:''}
+  {"id": "s1", "marca": "Barilla", "nome": "Spaghetti n.5", "cottura": 9, "alDente": null, "note": "", "fonte": "https://www.barilla.com/it-it/prodotti/pasta/i-classici/spaghetti-n-5"},
+  {"id": "ba-spaghettini", "marca": "Barilla", "nome": "Spaghettini", "cottura": 5, "alDente": null, "note": "", "fonte": "https://www.barilla.com/it-it/prodotti/pasta/i-classici/spaghettini"},
+  {"id": "ba-fusilli", "marca": "Barilla", "nome": "Fusilli", "cottura": 11, "alDente": null, "note": "", "fonte": "https://www.barilla.com/it-it/prodotti/pasta/i-classici/fusilli"},
+  {"id": "ba-linguine", "marca": "Barilla", "nome": "Linguine", "cottura": 10, "alDente": null, "note": "", "fonte": "https://www.barilla.com/it-it/prodotti/pasta/i-classici/linguine"},
+  {"id": "ba-pipe-rigate", "marca": "Barilla", "nome": "Pipe Rigate", "cottura": 10, "alDente": null, "note": "", "fonte": "https://www.barilla.com/it-it/prodotti/pasta/i-classici/pipe-rigate"},
+  {"id": "ba-rigatoni", "marca": "Barilla", "nome": "Rigatoni", "cottura": 12, "alDente": null, "note": "", "fonte": "https://www.barilla.com/it-it/prodotti/pasta/i-classici/rigatoni"},
+  {"id": "ba-sedani-rigati", "marca": "Barilla", "nome": "Sedani Rigati", "cottura": 12, "alDente": null, "note": "", "fonte": "https://www.barilla.com/it-it/prodotti/pasta/i-classici/sedani-rigati"},
+  {"id": "ba-gnocchi", "marca": "Barilla", "nome": "Gnocchi", "cottura": 14, "alDente": null, "note": "", "fonte": "https://www.barilla.com/it-it/prodotti/pasta/i-classici/gnocchi"},
+  {"id": "ba-orecchiette", "marca": "Barilla", "nome": "Orecchiette", "cottura": 12, "alDente": null, "note": "", "fonte": "https://www.barilla.com/it-it/prodotti/pasta/specialita/orecchiette"},
+  {"id": "ba-ditaloni-rigati-cannolicchi", "marca": "Barilla", "nome": "Ditaloni Rigati (cannolicchi)", "cottura": 12, "alDente": null, "note": "", "fonte": "https://www.barilla.com/it-it/prodotti/pasta/i-classici/ditaloni-rigati"},
+  {"id": "ba-bucatini", "marca": "Barilla", "nome": "Bucatini", "cottura": 8, "alDente": null, "note": "", "fonte": "https://www.barilla.com/it-it/prodotti/pasta/i-classici/bucatini"},
+  {"id": "ba-farfalle", "marca": "Barilla", "nome": "Farfalle", "cottura": 12, "alDente": null, "note": "", "fonte": "https://www.barilla.com/it-it/prodotti/pasta/i-classici/farfalle"},
+  {"id": "s2", "marca": "Barilla", "nome": "Penne Rigate n.73", "cottura": 11, "alDente": null, "note": "", "fonte": "https://www.barilla.com/it-it/prodotti/pasta/i-classici/penne-rigate"},
+  {"id": "ba-mezze-maniche-rigate", "marca": "Barilla", "nome": "Mezze Maniche Rigate", "cottura": 12, "alDente": null, "note": "", "fonte": "https://www.barilla.com/it-it/prodotti/pasta/i-classici/mezze-maniche-rigate"},
+  {"id": "ba-tortiglioni", "marca": "Barilla", "nome": "Tortiglioni", "cottura": 12, "alDente": null, "note": "", "fonte": "https://www.barilla.com/it-it/prodotti/pasta/i-classici/tortiglioni"},
+  {"id": "s3", "marca": "De Cecco", "nome": "Spaghetti n.12", "cottura": 12, "alDente": 10, "note": "", "fonte": "https://www.dececco.com/it_it/product/spaghetti-n-12/"},
+  {"id": "de-spaghettini-n-11", "marca": "De Cecco", "nome": "Spaghettini n.11", "cottura": 9, "alDente": 7, "note": "", "fonte": "https://www.dececco.com/it_it/product/spaghettini-n-11/"},
+  {"id": "de-fusilli-n-34", "marca": "De Cecco", "nome": "Fusilli n.34", "cottura": 11, "alDente": 9, "note": "", "fonte": "https://www.dececco.com/it_it/product/fusilli-n-34/"},
+  {"id": "de-linguine-n-7", "marca": "De Cecco", "nome": "Linguine n.7", "cottura": 12, "alDente": 10, "note": "", "fonte": "https://www.dececco.com/it_it/product/linguine-n-7/"},
+  {"id": "de-pipe-rigate-n-49", "marca": "De Cecco", "nome": "Pipe Rigate n.49", "cottura": 13, "alDente": 11, "note": "", "fonte": "https://www.dececco.com/it_it/product/pipe-rigate-n-49/"},
+  {"id": "de-rigatoni-n-24", "marca": "De Cecco", "nome": "Rigatoni n.24", "cottura": 14, "alDente": 12, "note": "", "fonte": "https://www.dececco.com/it_it/product/rigatoni-n-24/"},
+  {"id": "de-sedani-rigati-n-57", "marca": "De Cecco", "nome": "Sedani Rigati n.57", "cottura": 12, "alDente": 10, "note": "", "fonte": "https://www.dececco.com/it_it/product/sedani-rigati-n-57/"},
+  {"id": "de-gnocchi-n-46", "marca": "De Cecco", "nome": "Gnocchi n.46", "cottura": 9, "alDente": 7, "note": "", "fonte": "https://www.dececco.com/it_it/product/gnocchi-n-46/"},
+  {"id": "de-orecchiette-n-91", "marca": "De Cecco", "nome": "Orecchiette n.91", "cottura": 11, "alDente": 9, "note": "", "fonte": "https://www.dececco.com/it_it/product/orecchiette-n-91/"},
+  {"id": "de-ditali-rigati-n-59-cannolicchi", "marca": "De Cecco", "nome": "Ditali Rigati n.59 (cannolicchi)", "cottura": 12, "alDente": 10, "note": "", "fonte": "https://www.dececco.com/it_it/product/ditali-rigati-n-59/"},
+  {"id": "de-bucatini-n-15", "marca": "De Cecco", "nome": "Bucatini n.15", "cottura": 11, "alDente": 9, "note": "", "fonte": "https://www.dececco.com/it_it/product/bucatini-n-15/"},
+  {"id": "de-farfalle-n-93", "marca": "De Cecco", "nome": "Farfalle n.93", "cottura": 13, "alDente": 11, "note": "", "fonte": "https://www.dececco.com/it_it/product/farfalle-n-93/"},
+  {"id": "de-penne-rigate-n-41", "marca": "De Cecco", "nome": "Penne Rigate n.41", "cottura": 12, "alDente": 10, "note": "", "fonte": "https://www.dececco.com/it_it/product/penne-rigate-n-41/"},
+  {"id": "de-mezze-maniche-rigate-n-136", "marca": "De Cecco", "nome": "Mezze Maniche Rigate n.136", "cottura": 13, "alDente": 11, "note": "", "fonte": "https://www.dececco.com/it_it/product/mezze-maniche-rigate-n-136/"},
+  {"id": "de-tortiglioni-n-23", "marca": "De Cecco", "nome": "Tortiglioni n.23", "cottura": 11, "alDente": 9, "note": "", "fonte": "https://www.dececco.com/it_it/product/tortiglioni-n-23/"},
+  {"id": "ru-spaghetti-n-3", "marca": "Rummo", "nome": "Spaghetti n.3", "cottura": 9, "alDente": null, "note": "", "fonte": "https://www.pastarummo.it/prodotti/le-classiche/spaghetti-3-3/"},
+  {"id": "ru-spaghettini-n-2", "marca": "Rummo", "nome": "Spaghettini n.2", "cottura": 7, "alDente": null, "note": "", "fonte": "https://www.pastarummo.it/prodotti/le-classiche/spaghettini/"},
+  {"id": "ru-fusilli-n-48", "marca": "Rummo", "nome": "Fusilli n.48", "cottura": 8, "alDente": null, "note": "", "fonte": "https://www.pastarummo.it/prodotti/le-classiche/fusilli-48/"},
+  {"id": "ru-linguine-n-13", "marca": "Rummo", "nome": "Linguine n.13", "cottura": 10, "alDente": null, "note": "", "fonte": "https://www.pastarummo.it/prodotti/le-classiche/linguine-13/"},
+  {"id": "ru-rigatoni-n-50", "marca": "Rummo", "nome": "Rigatoni n.50", "cottura": 14, "alDente": null, "note": "", "fonte": "https://www.pastarummo.it/prodotti/le-classiche/rigatoni-50/"},
+  {"id": "ru-sedani-n-68", "marca": "Rummo", "nome": "Sedani n.68", "cottura": 12, "alDente": null, "note": "", "fonte": "https://www.pastarummo.it/prodotti/le-classiche/sedani-68/"},
+  {"id": "ru-orecchiette-n-87", "marca": "Rummo", "nome": "Orecchiette n.87", "cottura": 12, "alDente": null, "note": "", "fonte": "https://www.pastarummo.it/prodotti/le-leggendarie/orecchiette-87/"},
+  {"id": "ru-bucatini-n-6", "marca": "Rummo", "nome": "Bucatini n.6", "cottura": 6, "alDente": null, "note": "", "fonte": "https://www.pastarummo.it/prodotti/le-classiche/bucatini-6/"},
+  {"id": "ru-farfalle-n-85", "marca": "Rummo", "nome": "Farfalle n.85", "cottura": 12, "alDente": null, "note": "", "fonte": "https://www.pastarummo.it/prodotti/le-classiche/farfalle-85/"},
+  {"id": "ru-penne-rigate-n-66", "marca": "Rummo", "nome": "Penne Rigate n.66", "cottura": 11, "alDente": null, "note": "", "fonte": "https://www.pastarummo.it/prodotti/le-classiche/penne-rigate-66-3/"},
+  {"id": "ru-mezzi-rigatoni-n-51", "marca": "Rummo", "nome": "Mezzi Rigatoni n.51", "cottura": 14, "alDente": null, "note": "", "fonte": "https://www.pastarummo.it/prodotti/le-classiche/mezzi-rigatoni-51/"},
+  {"id": "ru-elicoidali-n-49", "marca": "Rummo", "nome": "Elicoidali n.49", "cottura": 12, "alDente": null, "note": "", "fonte": "https://www.pastarummo.it/prodotti/le-classiche/elicoidali-49/"},
+  {"id": "ru-gomiti-rigati-n-169", "marca": "Rummo", "nome": "Gomiti Rigati n.169", "cottura": 10, "alDente": null, "note": "", "fonte": "https://www.pastarummo.it/prodotti/le-classiche/gomiti-rigati-169/"},
+  {"id": "ru-tubetti-rigati-n-72", "marca": "Rummo", "nome": "Tubetti Rigati n.72", "cottura": 12, "alDente": null, "note": "", "fonte": "https://www.pastarummo.it/prodotti/le-classiche/tubetti-rigati-72-3/"},
+  {"id": "ru-gnocchetti-sardi-n-63", "marca": "Rummo", "nome": "Gnocchetti Sardi n.63", "cottura": 11, "alDente": null, "note": "", "fonte": "https://www.pastarummo.it/prodotti/le-classiche/gnocchetti-sardi-63/"},
+  {"id": "lm-spaghetti-n-15", "marca": "La Molisana", "nome": "Spaghetti n.15", "cottura": 11, "alDente": null, "note": "", "fonte": "https://www.lamolisana.it/pasta/n-15-spaghetti-classiche/"},
+  {"id": "lm-spaghettini-n-16", "marca": "La Molisana", "nome": "Spaghettini n.16", "cottura": 9, "alDente": null, "note": "", "fonte": "https://www.lamolisana.it/pasta/n-16-spaghettini-classiche/"},
+  {"id": "lm-fusilli-n-28", "marca": "La Molisana", "nome": "Fusilli n.28", "cottura": 11, "alDente": null, "note": "", "fonte": "https://www.lamolisana.it/pasta/n-28-fusilli-classiche/"},
+  {"id": "lm-linguine-n-6", "marca": "La Molisana", "nome": "Linguine n.6", "cottura": 12, "alDente": null, "note": "", "fonte": "https://www.lamolisana.it/pasta/n-6-linguine-classiche/"},
+  {"id": "lm-lumache-rigate-n-54-pipe", "marca": "La Molisana", "nome": "Lumache Rigate n.54 (pipe)", "cottura": 12, "alDente": null, "note": "", "fonte": "https://www.lamolisana.it/pasta/n-54-lumache-rigate-classiche/"},
+  {"id": "lm-rigatoni-n-31", "marca": "La Molisana", "nome": "Rigatoni n.31", "cottura": 13, "alDente": null, "note": "", "fonte": "https://www.lamolisana.it/pasta/n-31-rigatoni-classiche/"},
+  {"id": "lm-sedani-n-44", "marca": "La Molisana", "nome": "Sedani n.44", "cottura": 13, "alDente": null, "note": "", "fonte": "https://www.lamolisana.it/pasta/n-44-sedani-classiche/"},
+  {"id": "lm-gnocchi-n-26", "marca": "La Molisana", "nome": "Gnocchi n.26", "cottura": 10, "alDente": null, "note": "", "fonte": "https://www.lamolisana.it/pasta/n-26-gnocchi-classiche/"},
+  {"id": "lm-orecchiette-pugliesi-n-30", "marca": "La Molisana", "nome": "Orecchiette Pugliesi n.30", "cottura": 11, "alDente": null, "note": "", "fonte": "https://www.lamolisana.it/pasta/n-30-orecchiette-pugliesi-classiche/"},
+  {"id": "lm-ditali-rigati-n-47-cannolicchi", "marca": "La Molisana", "nome": "Ditali Rigati n.47 (cannolicchi)", "cottura": 8, "alDente": null, "note": "", "fonte": "https://www.lamolisana.it/pasta/n-47-ditali-rigati-classiche/"},
+  {"id": "lm-ditaloni-rigati-n-42", "marca": "La Molisana", "nome": "Ditaloni Rigati n.42", "cottura": 12, "alDente": null, "note": "", "fonte": "https://www.lamolisana.it/pasta/n-42-ditaloni-rigati-classiche/"},
+  {"id": "lm-bucatini-n-12", "marca": "La Molisana", "nome": "Bucatini n.12", "cottura": 6, "alDente": null, "note": "", "fonte": "https://www.lamolisana.it/pasta/n-12-bucatini-classiche/"},
+  {"id": "lm-farfalle-rigate-n-66", "marca": "La Molisana", "nome": "Farfalle Rigate n.66", "cottura": 10, "alDente": null, "note": "", "fonte": "https://www.lamolisana.it/pasta/n-66-farfalle-rigate-classiche/"},
+  {"id": "lm-penne-rigate-n-20", "marca": "La Molisana", "nome": "Penne Rigate n.20", "cottura": 12, "alDente": null, "note": "", "fonte": "https://www.lamolisana.it/pasta/n-20-penne-rigate-classiche/"},
+  {"id": "lm-mezzi-rigatoni-n-32", "marca": "La Molisana", "nome": "Mezzi Rigatoni n.32", "cottura": 12, "alDente": null, "note": "", "fonte": "https://www.lamolisana.it/pasta/n-32-mezzi-rigatoni-classiche/"}
 ];
 function salva(l){try{localStorage.setItem(CHIAVE,JSON.stringify(l));}catch(e){}}
-function carica(){try{const d=JSON.parse(localStorage.getItem(CHIAVE));if(Array.isArray(d))return d;}catch(e){}salva(SEED);return SEED.map(x=>({...x}));}
+const CHIAVE_ELIM='cuocipasta.eliminati',CHIAVE_VER='cuocipasta.seedver';
+function leggiJSON(k,def){try{const v=JSON.parse(localStorage.getItem(k));return v==null?def:v;}catch(e){return def;}}
+function carica(){
+  let d=leggiJSON(CHIAVE,null);
+  if(!Array.isArray(d))d=[];
+  // Aggiunge le paste nuove dell'elenco ufficiale senza toccare quelle modificate o eliminate dall'utente
+  if(leggiJSON(CHIAVE_VER,0)<SEED_VER){
+    const presenti=new Set(d.map(x=>x.id)),eliminati=new Set(leggiJSON(CHIAVE_ELIM,[]));
+    SEED.forEach(x=>{if(!presenti.has(x.id)&&!eliminati.has(x.id))d.push({...x,ean:[]});});
+    try{localStorage.setItem(CHIAVE_VER,JSON.stringify(SEED_VER));}catch(e){}
+    salva(d);
+  }
+  return d;
+}
 let paste=carica();
 let corrente=null;
 
@@ -206,7 +278,8 @@ $('bModifica').onclick=()=>apriModifica(paste.find(x=>x.id===corrente));
 $('bElimina').onclick=()=>{
   const p=paste.find(x=>x.id===corrente);if(!p)return;
   if(!confirm('Eliminare '+p.marca+' '+p.nome+'?'))return;
-  paste=paste.filter(x=>x.id!==p.id);salva(paste);parla('Eliminata.');mostra('home');
+  paste=paste.filter(x=>x.id!==p.id);salva(paste);
+  try{const e=new Set(leggiJSON(CHIAVE_ELIM,[]));e.add(p.id);localStorage.setItem(CHIAVE_ELIM,JSON.stringify([...e]));}catch(err){}parla('Eliminata.');mostra('home');
 };
 
 /* ---------- aggiungi / modifica ---------- */
@@ -254,7 +327,14 @@ function cerca(testo){
     let s=0;q.forEach(w=>{if(t.has(w))s+=/^\d+$/.test(w)?2:1;});
     if(s>max){max=s;ris=[p];}else if(s===max&&s>0)ris.push(p);
   });
-  return max>0?ris:[];
+  if(!max)return[];
+  // Se i risultati sono tutti della stessa marca, preferisce il nome più vicino (es. "rigatoni" e non "mezzi rigatoni")
+  if(ris.length>1&&new Set(ris.map(p=>p.marca)).size===1){
+    const extra=p=>norm(p.marca+' '+p.nome).filter(w=>!q.includes(w)&&!/^\d+$/.test(w)).length;
+    const min=Math.min(...ris.map(extra));
+    ris=ris.filter(p=>extra(p)===min);
+  }
+  return ris;
 }
 const ERRORI_VOCE={
   'not-allowed':'Il microfono non è consentito. Apri le impostazioni del sito in Chrome e consenti il microfono.',
