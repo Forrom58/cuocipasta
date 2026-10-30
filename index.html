@@ -29,6 +29,7 @@ button:focus-visible,h1:focus-visible,h2:focus-visible{outline:3px solid #fff;ou
 .selettore{display:flex;align-items:center;gap:10px;margin:6px 0 4px}
 .selettore button{width:30%;flex:none;font-size:40px;line-height:1;text-align:center;margin:0;min-height:64px}
 #minLiberi{flex:1;text-align:center;font-size:64px;font-weight:700;color:var(--accento);font-variant-numeric:tabular-nums}
+button.spento{opacity:.35;border-style:dashed}
 [hidden]{display:none!important}
 </style>
 </head>
@@ -38,7 +39,7 @@ button:focus-visible,h1:focus-visible,h2:focus-visible{outline:3px solid #fff;ou
 
 <section id="home">
   <h1>CuociPasta</h1>
-  <p class="nota" id="versione">Versione 11</p>
+  <p class="nota" id="versione">Versione 12</p>
   <button class="primario" id="bParla">🎤 Parla: marca e pasta</button>
   <button class="primario" id="bScan">📷 Inquadra il codice a barre</button>
   <button id="bTimerLibero">⏱ Timer libero</button>
@@ -331,6 +332,8 @@ function aggiornaBanner(){
 function aggiornaUI(){
   $('bFerma').textContent={corre:'⏸ Ferma',pausa:'▶ Riprendi',fermo:'▶ Avvia',allarme:'🔕 Ferma allarme'}[T.stato];
   $('tempo').textContent=mmss(restante());
+  const bloccati=T.stato==='corre'||T.stato==='allarme';
+  ['bAzzera','bRiavvia'].forEach(id=>{$(id).classList.toggle('spento',bloccati);$(id).setAttribute('aria-disabled',bloccati);});
   aggiornaBanner();
 }
 function fermaIntervalli(){clearInterval(T.int);clearInterval(T.allarme);T.int=null;T.allarme=null;}
@@ -366,8 +369,15 @@ $('bFerma').onclick=()=>{
   else if(T.min)avviaTimer(T.min,T.nome);
   else parla('Nessun timer.');
 };
-$('bAzzera').onclick=()=>{if(!T.min){parla('Nessun timer.');return;}azzera(true);};
-$('bRiavvia').onclick=()=>{if(!T.min){parla('Nessun timer.');return;}avviaTimer(T.min,T.nome);};
+// Azzera e Riavvia funzionano solo a timer fermo (pausa o azzerato), per evitare tocchi accidentali
+function solaFermo(){
+  if(T.stato==='corre'){parla('Prima ferma il timer.');return false;}
+  if(T.stato==='allarme'){parla('Prima ferma l\'allarme.');return false;}
+  if(!T.min){parla('Nessun timer.');return false;}
+  return true;
+}
+$('bAzzera').onclick=()=>{if(solaFermo())azzera(true);};
+$('bRiavvia').onclick=()=>{if(solaFermo())avviaTimer(T.min,T.nome);};
 // La voce parte circa 2 secondi dopo: col timer in corsa diciamo il tempo che ci sarà quando parla
 const ANTICIPO_VOCE=2;
 function fraseMancano(extra){
