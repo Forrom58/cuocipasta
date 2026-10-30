@@ -35,7 +35,7 @@ button:focus-visible,h1:focus-visible,h2:focus-visible{outline:3px solid #fff;ou
 
 <section id="home">
   <h1>CuociPasta</h1>
-  <p class="nota" id="versione">Versione 6</p>
+  <p class="nota" id="versione">Versione 7</p>
   <button class="primario" id="bParla">🎤 Parla: marca e pasta</button>
   <button class="primario" id="bScan">📷 Inquadra il codice a barre</button>
   <button id="bTimerLibero">⏱ Timer libero</button>
@@ -48,7 +48,7 @@ button:focus-visible,h1:focus-visible,h2:focus-visible{outline:3px solid #fff;ou
 <section id="elenco" hidden>
   <h2 id="titoloElenco"></h2>
   <div id="listaElenco"></div>
-  <button class="indietro">⬅ Indietro</button>
+  <div class="riga"><button class="indietro">⬅ Indietro</button><button class="home">🏠 Home</button></div>
 </section>
 
 <section id="scheda" hidden>
@@ -60,7 +60,7 @@ button:focus-visible,h1:focus-visible,h2:focus-visible{outline:3px solid #fff;ou
   <button id="bRileggi">🔊 Rileggi</button>
   <button id="bModifica">✏️ Modifica</button>
   <button id="bElimina" class="pericolo">🗑 Elimina</button>
-  <button class="indietro">⬅ Indietro</button>
+  <div class="riga"><button class="indietro">⬅ Indietro</button><button class="home">🏠 Home</button></div>
 </section>
 
 <section id="timer" hidden>
@@ -69,21 +69,21 @@ button:focus-visible,h1:focus-visible,h2:focus-visible{outline:3px solid #fff;ou
   <button class="primario" id="bFerma">⏹ Ferma</button>
   <div class="riga"><button id="bMeno">−1 min</button><button id="bPiu">+1 min</button></div>
   <button id="bQuanto">🔊 Quanto manca?</button>
-  <button class="indietro">⬅ Indietro (il timer continua)</button>
+  <div class="riga"><button class="indietro">⬅ Indietro</button><button class="home">🏠 Home</button></div>
 </section>
 
 <section id="scan" hidden>
   <h2>Inquadra il codice a barre</h2>
   <video id="video" playsinline muted></video>
   <button id="bLuce" hidden>💡 Accendi luce</button>
-  <button class="indietro">⬅ Annulla</button>
+  <div class="riga"><button class="indietro">⬅ Annulla</button><button class="home">🏠 Home</button></div>
 </section>
 
 <section id="libero" hidden>
   <h2>Timer libero</h2>
   <div class="campo"><label for="minLiberi">Minuti</label><input id="minLiberi" type="number" inputmode="numeric" min="1" max="120" value="10"></div>
   <button class="primario" id="bAvviaLibero">▶ Avvia</button>
-  <button class="indietro">⬅ Indietro</button>
+  <div class="riga"><button class="indietro">⬅ Indietro</button><button class="home">🏠 Home</button></div>
 </section>
 
 <section id="modifica" hidden>
@@ -95,7 +95,7 @@ button:focus-visible,h1:focus-visible,h2:focus-visible{outline:3px solid #fff;ou
   <div class="campo"><label for="fNote">Note</label><textarea id="fNote" rows="2"></textarea></div>
   <p class="nota" id="fEan"></p>
   <button class="primario" id="bSalva">💾 Salva</button>
-  <button class="indietro">⬅ Annulla</button>
+  <div class="riga"><button class="indietro">⬅ Annulla</button><button class="home">🏠 Home</button></div>
 </section>
 
 <section id="backup" hidden>
@@ -104,7 +104,7 @@ button:focus-visible,h1:focus-visible,h2:focus-visible{outline:3px solid #fff;ou
   <button id="bEsporta">⬇ Salva file di backup</button>
   <button id="bImporta">⬆ Ripristina da file</button>
   <input id="fileImporta" type="file" accept=".json,application/json" hidden>
-  <button class="indietro">⬅ Indietro</button>
+  <div class="riga"><button class="indietro">⬅ Indietro</button><button class="home">🏠 Home</button></div>
 </section>
 
 <script>
@@ -137,15 +137,18 @@ function mostra(id,push=true){
   if(id!=='scan')fermaScan();
   if(id==='scan'&&!push)id='home';
   document.querySelectorAll('section').forEach(s=>s.hidden=s.id!==id);
-  if(push)history.pushState({s:id},'');
+  if(push){profondita++;history.pushState({s:id,d:profondita},'');}
   if(id==='home')renderHome();
   if(id==='scheda'&&!renderScheda()){mostra('home',false);return;}
   window.scrollTo(0,0);
   const h=document.querySelector('#'+id+' h1, #'+id+' h2');if(h){h.tabIndex=-1;h.focus();}
 }
-history.replaceState({s:'home'},'');
-window.addEventListener('popstate',e=>mostra((e.state&&e.state.s)||'home',false));
+let profondita=0;
+history.replaceState({s:'home',d:0},'');
+window.addEventListener('popstate',e=>{profondita=(e.state&&e.state.d)||0;mostra((e.state&&e.state.s)||'home',false);});
 document.querySelectorAll('.indietro').forEach(b=>b.onclick=()=>history.back());
+function vaiHome(){if(profondita>0)history.go(-profondita);else mostra('home',false);}
+document.querySelectorAll('.home').forEach(b=>b.onclick=vaiHome);
 
 function btn(t,fn,cls){const b=document.createElement('button');b.type='button';b.textContent=t;if(cls)b.className=cls;b.onclick=fn;return b;}
 const ordina=(a,b)=>a.localeCompare(b,'it');
@@ -221,7 +224,7 @@ $('bSalva').onclick=()=>{
   if(eanInAttesa)associa(corrente,eanInAttesa);
   eanInAttesa=null;
   salva(paste);
-  history.replaceState({s:'scheda'},'');mostra('scheda',false);parla('Salvata. '+marca+', '+nome+', '+minuti(cot)+'.');
+  history.replaceState({s:'scheda',d:profondita},'');mostra('scheda',false);parla('Salvata. '+marca+', '+nome+', '+minuti(cot)+'.');
 };
 
 /* ---------- ricerca vocale ---------- */
@@ -333,10 +336,14 @@ function finito(){
 $('bFerma').onclick=()=>{const eraAllarme=!!T.allarme;fermaTutto();parla(eraAllarme?'Allarme fermato.':'Timer fermato.');};
 $('bPiu').onclick=()=>{if(!T.int)return;T.fine+=60000;if(T.fine-Date.now()>60000)T.avvisato=false;tick();parla('Aggiunto un minuto. Mancano '+mmss(T.fine-Date.now()).replace(':',' minuti e ')+' secondi.');};
 $('bMeno').onclick=()=>{if(!T.int)return;T.fine-=60000;tick();if(T.int)parla('Tolto un minuto.');};
+const ANTICIPO_VOCE=2;
 function quanto(){
   if(T.allarme){parla('La pasta è pronta.');return;}
   if(!T.int){parla('Nessun timer attivo.');return;}
-  const s=Math.ceil((T.fine-Date.now())/1000),m=Math.floor(s/60),x=s%60;
+  // La voce parte circa 2 secondi dopo: diciamo il tempo che ci sarà quando parla
+  const s=Math.ceil((T.fine-Date.now())/1000)-ANTICIPO_VOCE;
+  if(s<=0){parla('Pochi secondi.');return;}
+  const m=Math.floor(s/60),x=s%60;
   parla('Mancano '+(m?minuti(m)+(x?' e ':''):'')+(x?x+' secondi':'')+'.');
 }
 $('bQuanto').onclick=quanto;$('tempo').onclick=quanto;
@@ -390,7 +397,7 @@ $('bLuce').onclick=async()=>{
 };
 async function trovatoCodice(code){
   const p=paste.find(x=>(x.ean||[]).includes(code));
-  if(p){history.replaceState({s:'home'},'');apriScheda(p.id);return;}
+  if(p){history.replaceState({s:'home',d:profondita},'');apriScheda(p.id);return;}
   parla('Codice letto. Cerco il prodotto.');
   let info=null;
   try{
@@ -402,7 +409,7 @@ async function trovatoCodice(code){
       if(!info.marca&&!info.nome)info=null;
     }
   }catch(e){}
-  history.replaceState({s:'home'},'');
+  history.replaceState({s:'home',d:profondita},'');
   if(!info){
     apriModifica(null,{ean:code});
     parla('Prodotto non trovato. Scrivi marca, tipo di pasta e minuti. Dalla prossima volta lo riconoscerò.');
