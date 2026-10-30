@@ -1,0 +1,329 @@
+<!doctype html>
+<html lang="it" style="background:#000">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#000000">
+<meta name="color-scheme" content="dark">
+<title>CuociPasta</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<style>
+html,body{background:#000;color:#fff;margin:0}
+:root{--giallo:#FFD400}
+body{font-family:system-ui,Roboto,Arial,sans-serif;font-size:26px;line-height:1.3;padding:12px 16px 40px}
+h1{font-size:36px;color:var(--giallo);margin:8px 0 16px}
+h2{font-size:32px;color:var(--giallo);margin:8px 0 12px}
+button{display:block;width:100%;min-height:80px;margin:0 0 14px;padding:14px;background:#1a1a1a;color:#fff;border:3px solid var(--giallo);border-radius:16px;font:inherit;font-weight:700;text-align:left}
+button.primario{background:var(--giallo);color:#000;text-align:center}
+button.pericolo{border-color:#ff5050}
+button:focus-visible,h1:focus-visible,h2:focus-visible{outline:5px solid #fff;outline-offset:3px}
+.riga{display:flex;gap:12px}.riga button{flex:1;text-align:center}
+.grande{font-size:42px;font-weight:800;color:var(--giallo);margin:6px 0}
+#tempo{font-size:110px;font-weight:800;text-align:center;font-variant-numeric:tabular-nums;color:var(--giallo);margin:10px 0;background:none;border:none;min-height:0}
+.campo{margin-bottom:16px}.campo label{display:block;margin-bottom:6px}
+.campo input,.campo textarea{width:100%;box-sizing:border-box;font:inherit;font-size:28px;padding:12px;background:#111;color:#fff;border:3px solid #fff;border-radius:12px}
+#avviso{min-height:1.3em;background:#222;padding:10px;border-radius:12px;margin-bottom:14px}
+.nota{color:#ddd;font-size:23px}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<div id="avviso" role="status" aria-live="polite"></div>
+<button id="bannerTimer" class="primario" hidden></button>
+
+<section id="home">
+  <h1>CuociPasta</h1>
+  <button class="primario" id="bParla">🎤 Parla: marca e pasta</button>
+  <button id="bTimerLibero">⏱ Timer libero</button>
+  <button id="bAggiungi">➕ Aggiungi una pasta</button>
+  <h2>Marche</h2>
+  <div id="listaMarche"></div>
+  <button id="bBackup">💾 Salva o ripristina elenco</button>
+</section>
+
+<section id="elenco" hidden>
+  <h2 id="titoloElenco"></h2>
+  <div id="listaElenco"></div>
+  <button class="indietro">⬅ Indietro</button>
+</section>
+
+<section id="scheda" hidden>
+  <h2 id="schedaTitolo"></h2>
+  <div class="grande" id="schedaCottura"></div>
+  <div class="grande" id="schedaAlDente"></div>
+  <p class="nota" id="schedaNote"></p>
+  <div id="schedaBottoni"></div>
+  <button id="bRileggi">🔊 Rileggi</button>
+  <button id="bModifica">✏️ Modifica</button>
+  <button id="bElimina" class="pericolo">🗑 Elimina</button>
+  <button class="indietro">⬅ Indietro</button>
+</section>
+
+<section id="timer" hidden>
+  <h2 id="timerNome">Timer</h2>
+  <button id="tempo" aria-label="Tempo rimanente, tocca per sentirlo">00:00</button>
+  <button class="primario" id="bFerma">⏹ Ferma</button>
+  <div class="riga"><button id="bMeno">−1 min</button><button id="bPiu">+1 min</button></div>
+  <button id="bQuanto">🔊 Quanto manca?</button>
+  <button class="indietro">⬅ Indietro (il timer continua)</button>
+</section>
+
+<section id="libero" hidden>
+  <h2>Timer libero</h2>
+  <div class="campo"><label for="minLiberi">Minuti</label><input id="minLiberi" type="number" inputmode="numeric" min="1" max="120" value="10"></div>
+  <button class="primario" id="bAvviaLibero">▶ Avvia</button>
+  <button class="indietro">⬅ Indietro</button>
+</section>
+
+<section id="modifica" hidden>
+  <h2 id="modTitolo">Pasta</h2>
+  <div class="campo"><label for="fMarca">Marca</label><input id="fMarca" autocomplete="off"></div>
+  <div class="campo"><label for="fNome">Tipo di pasta (es. Spaghetti n.5)</label><input id="fNome" autocomplete="off"></div>
+  <div class="campo"><label for="fCottura">Minuti di cottura</label><input id="fCottura" type="number" inputmode="numeric" min="1" max="60"></div>
+  <div class="campo"><label for="fAlDente">Minuti al dente (se c'è)</label><input id="fAlDente" type="number" inputmode="numeric" min="1" max="60"></div>
+  <div class="campo"><label for="fNote">Note</label><textarea id="fNote" rows="2"></textarea></div>
+  <button class="primario" id="bSalva">💾 Salva</button>
+  <button class="indietro">⬅ Annulla</button>
+</section>
+
+<section id="backup" hidden>
+  <h2>Salva o ripristina</h2>
+  <p class="nota">Salva un file con tutte le tue paste. Ti serve se cambi telefono o cancelli i dati.</p>
+  <button id="bEsporta">⬇ Salva file di backup</button>
+  <button id="bImporta">⬆ Ripristina da file</button>
+  <input id="fileImporta" type="file" accept=".json,application/json" hidden>
+  <button class="indietro">⬅ Indietro</button>
+</section>
+
+<script>
+'use strict';
+const $=id=>document.getElementById(id);
+const CHIAVE='cuocipasta.v1';
+// Tempi verificati su schede prodotto (ott. 2026). Controllare sempre la propria confezione.
+const SEED=[
+  {id:'s1',marca:'Barilla',nome:'Spaghetti n.5',cottura:9,alDente:null,note:''},
+  {id:'s2',marca:'Barilla',nome:'Penne Rigate n.73',cottura:11,alDente:null,note:''},
+  {id:'s3',marca:'De Cecco',nome:'Spaghetti n.12',cottura:12,alDente:10,note:''}
+];
+function salva(l){try{localStorage.setItem(CHIAVE,JSON.stringify(l));}catch(e){}}
+function carica(){try{const d=JSON.parse(localStorage.getItem(CHIAVE));if(Array.isArray(d))return d;}catch(e){}salva(SEED);return SEED.map(x=>({...x}));}
+let paste=carica();
+let corrente=null;
+
+/* ---------- voce ---------- */
+let voceIt=null;
+function scegliVoce(){const v=speechSynthesis.getVoices();voceIt=v.find(x=>(x.lang||'').toLowerCase().startsWith('it'))||null;}
+if('speechSynthesis' in window){scegliVoce();speechSynthesis.onvoiceschanged=scegliVoce;}
+function avviso(t){$('avviso').textContent=t;}
+function parla(t){avviso(t);if(!('speechSynthesis' in window))return;speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang='it-IT';if(voceIt)u.voice=voceIt;u.rate=0.95;speechSynthesis.speak(u);}
+function vibra(p){try{navigator.vibrate&&navigator.vibrate(p);}catch(e){}}
+function minuti(n){return n===1?'1 minuto':n+' minuti';}
+
+/* ---------- navigazione ---------- */
+function mostra(id,push=true){
+  document.querySelectorAll('section').forEach(s=>s.hidden=s.id!==id);
+  if(push)history.pushState({s:id},'');
+  if(id==='home')renderHome();
+  if(id==='scheda'&&!renderScheda()){mostra('home',false);return;}
+  window.scrollTo(0,0);
+  const h=document.querySelector('#'+id+' h1, #'+id+' h2');if(h){h.tabIndex=-1;h.focus();}
+}
+history.replaceState({s:'home'},'');
+window.addEventListener('popstate',e=>mostra((e.state&&e.state.s)||'home',false));
+document.querySelectorAll('.indietro').forEach(b=>b.onclick=()=>history.back());
+
+function btn(t,fn,cls){const b=document.createElement('button');b.type='button';b.textContent=t;if(cls)b.className=cls;b.onclick=fn;return b;}
+const ordina=(a,b)=>a.localeCompare(b,'it');
+
+function renderHome(){
+  const box=$('listaMarche');box.innerHTML='';
+  const marche=[...new Set(paste.map(p=>p.marca))].sort(ordina);
+  if(!marche.length)box.appendChild(Object.assign(document.createElement('p'),{className:'nota',textContent:'Nessuna pasta salvata.'}));
+  marche.forEach(m=>box.appendChild(btn(m,()=>apriMarca(m))));
+}
+function apriMarca(m){
+  $('titoloElenco').textContent=m;
+  mostraElenco(paste.filter(p=>p.marca===m).sort((a,b)=>ordina(a.nome,b.nome)),false);
+}
+function mostraElenco(lista,conMarca){
+  const box=$('listaElenco');box.innerHTML='';
+  lista.forEach(p=>box.appendChild(btn((conMarca?p.marca+' – ':'')+p.nome+' · '+p.cottura+' min',()=>apriScheda(p.id))));
+  mostra('elenco');
+}
+
+/* ---------- scheda ---------- */
+function apriScheda(id){corrente=id;mostra('scheda');leggiScheda();}
+function renderScheda(){
+  const p=paste.find(x=>x.id===corrente);if(!p)return false;
+  $('schedaTitolo').textContent=p.marca+' – '+p.nome;
+  $('schedaCottura').textContent='Cottura: '+minuti(p.cottura);
+  $('schedaAlDente').textContent=p.alDente?'Al dente: '+minuti(p.alDente):'';
+  $('schedaAlDente').hidden=!p.alDente;
+  $('schedaNote').textContent=p.note||'';
+  const b=$('schedaBottoni');b.innerHTML='';
+  if(p.alDente)b.appendChild(btn('▶ Timer al dente '+p.alDente+' min',()=>avviaTimer(p.alDente,p.nome+' al dente'),'primario'));
+  b.appendChild(btn('▶ Timer '+p.cottura+' min',()=>avviaTimer(p.cottura,p.nome),'primario'));
+  return true;
+}
+function leggiScheda(){
+  const p=paste.find(x=>x.id===corrente);if(!p)return;
+  let t=p.marca+', '+p.nome+'. Cottura '+minuti(p.cottura)+'.';
+  if(p.alDente)t+=' Al dente '+minuti(p.alDente)+'.';
+  if(p.note)t+=' '+p.note;
+  parla(t);
+}
+$('bRileggi').onclick=leggiScheda;
+$('bModifica').onclick=()=>apriModifica(paste.find(x=>x.id===corrente));
+$('bElimina').onclick=()=>{
+  const p=paste.find(x=>x.id===corrente);if(!p)return;
+  if(!confirm('Eliminare '+p.marca+' '+p.nome+'?'))return;
+  paste=paste.filter(x=>x.id!==p.id);salva(paste);parla('Eliminata.');mostra('home');
+};
+
+/* ---------- aggiungi / modifica ---------- */
+function apriModifica(p,pref){
+  corrente=p?p.id:null;
+  $('modTitolo').textContent=p?'Modifica pasta':'Nuova pasta';
+  $('fMarca').value=p?p.marca:((pref&&pref.marca)||'');
+  $('fNome').value=p?p.nome:((pref&&pref.nome)||'');
+  $('fCottura').value=p?p.cottura:'';
+  $('fAlDente').value=p&&p.alDente?p.alDente:'';
+  $('fNote').value=p?p.note:'';
+  mostra('modifica');
+}
+$('bAggiungi').onclick=()=>apriModifica(null);
+$('bSalva').onclick=()=>{
+  const marca=$('fMarca').value.trim(),nome=$('fNome').value.trim();
+  const cot=parseInt($('fCottura').value,10),ad=parseInt($('fAlDente').value,10);
+  if(!marca||!nome){parla('Scrivi marca e tipo di pasta.');return;}
+  if(!(cot>=1&&cot<=60)){parla('Scrivi i minuti di cottura, da 1 a 60.');return;}
+  const dati={marca,nome,cottura:cot,alDente:(ad>=1&&ad<=60)?ad:null,note:$('fNote').value.trim()};
+  if(corrente){paste=paste.map(x=>x.id===corrente?{...x,...dati}:x);}
+  else{corrente='u'+Date.now();paste.push({id:corrente,...dati});}
+  salva(paste);
+  history.replaceState({s:'scheda'},'');mostra('scheda',false);parla('Salvata. '+marca+', '+nome+', '+minuti(cot)+'.');
+};
+
+/* ---------- ricerca vocale ---------- */
+const NUMERI={uno:1,un:1,due:2,tre:3,quattro:4,cinque:5,sei:6,sette:7,otto:8,nove:9,dieci:10,undici:11,dodici:12,tredici:13,quattordici:14,quindici:15,sedici:16,diciassette:17,diciotto:18,diciannove:19,venti:20,trenta:30};
+const VUOTE=new Set(['la','le','il','lo','i','gli','di','del','della','pasta','n','e','con','per','mi','dai','vorrei']);
+function norm(s){
+  return s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+    .replace(/n°|nr\.?|n\.|numero/g,' ').replace(/[^a-z0-9 ]/g,' ')
+    .split(/\s+/).map(w=>NUMERI[w]!==undefined?String(NUMERI[w]):w).filter(w=>w&&!VUOTE.has(w));
+}
+function cerca(testo){
+  const q=norm(testo);if(!q.length)return[];
+  let max=0,ris=[];
+  paste.forEach(p=>{
+    const t=new Set(norm(p.marca+' '+p.nome));
+    let s=0;q.forEach(w=>{if(t.has(w))s+=/^\d+$/.test(w)?2:1;});
+    if(s>max){max=s;ris=[p];}else if(s===max&&s>0)ris.push(p);
+  });
+  return max>0?ris:[];
+}
+function ascolta(){
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SR){parla('Il riconoscimento vocale non è disponibile in questo browser.');return;}
+  sbloccaAudio();
+  const r=new SR();r.lang='it-IT';r.interimResults=false;r.maxAlternatives=3;
+  avviso('Ti ascolto… di\' marca e tipo di pasta, oppure "timer 8 minuti".');vibra(80);
+  r.onresult=e=>interpreta([...e.results[0]].map(a=>a.transcript));
+  r.onerror=e=>{if(e.error!=='aborted')parla('Non ho capito. Riprova.');};
+  try{r.start();}catch(e){}
+}
+function interpreta(alt){
+  const testo=alt[0]||'';
+  const w=norm(testo);
+  const iT=w.indexOf('timer');
+  if(iT>=0){const n=w.slice(iT+1).find(x=>/^\d+$/.test(x));if(n){avviaTimer(parseInt(n,10),'');return;}}
+  let ris=[];for(const a of alt){ris=cerca(a);if(ris.length)break;}
+  if(ris.length===1){apriScheda(ris[0].id);return;}
+  if(ris.length>1){
+    $('titoloElenco').textContent='Ho trovato '+ris.length+' paste';
+    mostraElenco(ris,true);
+    parla('Ho sentito: '+testo+'. Ho trovato '+ris.length+' paste: '+ris.map(p=>p.marca+' '+p.nome).join(', ')+'.');
+    return;
+  }
+  parla('Ho sentito: '+testo+'. Non la trovo. Puoi aggiungerla.');
+  apriModifica(null,{nome:testo});
+}
+$('bParla').onclick=ascolta;
+
+/* ---------- timer ---------- */
+const T={fine:0,nome:'',avvisato:false,int:null,allarme:null,giri:0};
+let audioCtx=null,wakeLock=null;
+function sbloccaAudio(){try{audioCtx=audioCtx||new(window.AudioContext||window.webkitAudioContext)();if(audioCtx.state==='suspended')audioCtx.resume();}catch(e){}}
+function beep(){
+  if(!audioCtx)return;const t=audioCtx.currentTime;
+  [0,0.35,0.7].forEach(d=>{const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.type='square';o.frequency.value=880;
+    g.gain.setValueAtTime(0.3,t+d);g.gain.exponentialRampToValueAtTime(0.001,t+d+0.3);o.connect(g);g.connect(audioCtx.destination);o.start(t+d);o.stop(t+d+0.31);});
+}
+async function teniAcceso(){try{if('wakeLock' in navigator&&!wakeLock){wakeLock=await navigator.wakeLock.request('screen');wakeLock.addEventListener('release',()=>wakeLock=null);}}catch(e){}}
+function rilascia(){try{wakeLock&&wakeLock.release();}catch(e){}wakeLock=null;}
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&(T.int||T.allarme)){teniAcceso();tick();}});
+function mmss(ms){const s=Math.max(0,Math.ceil(ms/1000));return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');}
+function fermaTutto(){clearInterval(T.int);clearInterval(T.allarme);T.int=null;T.allarme=null;T.fine=0;$('bannerTimer').hidden=true;rilascia();}
+function avviaTimer(min,nome){
+  sbloccaAudio();fermaTutto();
+  T.fine=Date.now()+min*60000;T.nome=nome;T.avvisato=min<=1;
+  $('timerNome').textContent=nome?'Timer: '+nome:'Timer';
+  T.int=setInterval(tick,250);teniAcceso();tick();
+  mostra('timer');parla('Timer avviato: '+minuti(min)+(nome?', '+nome:'')+'.');
+}
+function tick(){
+  if(!T.int)return;
+  const r=T.fine-Date.now();
+  if(r<=0){finito();return;}
+  if(!T.avvisato&&r<=60000){T.avvisato=true;parla('Manca un minuto. Assaggia la pasta.');vibra(400);}
+  $('tempo').textContent=mmss(r);
+  const b=$('bannerTimer');b.textContent='⏱ Timer '+mmss(r)+' – tocca per aprirlo';b.hidden=!$('timer').hidden;
+}
+function finito(){
+  clearInterval(T.int);T.int=null;$('tempo').textContent='00:00';
+  $('bannerTimer').textContent='🔔 Pasta pronta! Tocca per fermare';$('bannerTimer').hidden=!$('timer').hidden;
+  parla('Pasta pronta! Scola la pasta.');vibra([600,300,600,300,600]);T.giri=0;
+  T.allarme=setInterval(()=>{T.giri++;beep();vibra([600,300,600]);
+    if(T.giri%5===0)parla('Pasta pronta!');if(T.giri>=40)fermaTutto();},3000);
+  setTimeout(beep,2500);
+}
+$('bFerma').onclick=()=>{const eraAllarme=!!T.allarme;fermaTutto();parla(eraAllarme?'Allarme fermato.':'Timer fermato.');};
+$('bPiu').onclick=()=>{if(!T.int)return;T.fine+=60000;if(T.fine-Date.now()>60000)T.avvisato=false;tick();parla('Aggiunto un minuto. Mancano '+mmss(T.fine-Date.now()).replace(':',' minuti e ')+' secondi.');};
+$('bMeno').onclick=()=>{if(!T.int)return;T.fine-=60000;tick();if(T.int)parla('Tolto un minuto.');};
+function quanto(){
+  if(T.allarme){parla('La pasta è pronta.');return;}
+  if(!T.int){parla('Nessun timer attivo.');return;}
+  const s=Math.ceil((T.fine-Date.now())/1000),m=Math.floor(s/60),x=s%60;
+  parla('Mancano '+(m?minuti(m)+(x?' e ':''):'')+(x?x+' secondi':'')+'.');
+}
+$('bQuanto').onclick=quanto;$('tempo').onclick=quanto;
+$('bannerTimer').onclick=()=>mostra('timer');
+$('bTimerLibero').onclick=()=>mostra('libero');
+$('bAvviaLibero').onclick=()=>{const n=parseInt($('minLiberi').value,10);if(n>=1&&n<=120)avviaTimer(n,'');else parla('Scrivi un numero di minuti da 1 a 120.');};
+
+/* ---------- backup ---------- */
+$('bBackup').onclick=()=>mostra('backup');
+$('bEsporta').onclick=()=>{
+  const blob=new Blob([JSON.stringify(paste,null,1)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='cuocipasta-backup.json';
+  document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),5000);
+  parla('File di backup salvato nei download.');
+};
+$('bImporta').onclick=()=>$('fileImporta').click();
+$('fileImporta').onchange=e=>{
+  const f=e.target.files[0];if(!f)return;
+  f.text().then(t=>{
+    const d=JSON.parse(t);
+    if(!Array.isArray(d)||!d.every(p=>p&&p.id&&p.marca&&p.nome&&p.cottura>0))throw 0;
+    if(!confirm('Sostituire l\'elenco attuale con '+d.length+' paste dal file?'))return;
+    paste=d;salva(paste);parla('Ripristinate '+d.length+' paste.');mostra('home');
+  }).catch(()=>parla('Il file non è valido.')).finally(()=>e.target.value='');
+};
+
+/* ---------- avvio ---------- */
+renderHome();
+if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
+</script>
+</body>
+</html>
