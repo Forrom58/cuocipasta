@@ -38,7 +38,7 @@ button:focus-visible,h1:focus-visible,h2:focus-visible{outline:3px solid #fff;ou
 
 <section id="home">
   <h1>CuociPasta</h1>
-  <p class="nota" id="versione">Versione 9</p>
+  <p class="nota" id="versione">Versione 11</p>
   <button class="primario" id="bParla">🎤 Parla: marca e pasta</button>
   <button class="primario" id="bScan">📷 Inquadra il codice a barre</button>
   <button id="bTimerLibero">⏱ Timer libero</button>
@@ -69,7 +69,8 @@ button:focus-visible,h1:focus-visible,h2:focus-visible{outline:3px solid #fff;ou
 <section id="timer" hidden>
   <h2 id="timerNome">Timer</h2>
   <button id="tempo" aria-label="Tempo rimanente, tocca per sentirlo">00:00</button>
-  <button class="primario" id="bFerma">⏹ Ferma</button>
+  <button class="primario" id="bFerma">⏸ Ferma</button>
+  <div class="riga"><button id="bAzzera">↺ Azzera</button><button id="bRiavvia">⟳ Riavvia</button></div>
   <div class="riga"><button id="bMeno">−1 min</button><button id="bPiu">+1 min</button></div>
   <button id="bQuanto">🔊 Quanto manca?</button>
   <div class="riga"><button class="indietro">⬅ Indietro</button><button class="home">🏠 Home</button></div>
@@ -147,6 +148,7 @@ function mostra(id,push=true){
   document.querySelectorAll('section').forEach(s=>s.hidden=s.id!==id);
   if(push){profondita++;history.pushState({s:id,d:profondita},'');}
   if(id==='home')renderHome();
+  aggiornaBanner();
   if(id==='scheda'&&!renderScheda()){mostra('home',false);return;}
   window.scrollTo(0,0);
   const h=document.querySelector('#'+id+' h1, #'+id+' h2');if(h){h.tabIndex=-1;h.focus();}
@@ -305,7 +307,8 @@ function interpreta(alt){
 $('bParla').onclick=ascolta;
 
 /* ---------- timer ---------- */
-const T={fine:0,nome:'',avvisato:false,int:null,allarme:null,giri:0};
+// stato: 'fermo' (azzerato) | 'corre' | 'pausa' | 'allarme'
+const T={stato:'fermo',fine:0,pausa:0,min:0,nome:'',avvisato:false,int:null,allarme:null,giri:0};
 let audioCtx=null,wakeLock=null;
 function sbloccaAudio(){try{audioCtx=audioCtx||new(window.AudioContext||window.webkitAudioContext)();if(audioCtx.state==='suspended')audioCtx.resume();}catch(e){}}
 function beep(){
@@ -315,48 +318,79 @@ function beep(){
 }
 async function teniAcceso(){try{if('wakeLock' in navigator&&!wakeLock){wakeLock=await navigator.wakeLock.request('screen');wakeLock.addEventListener('release',()=>wakeLock=null);}}catch(e){}}
 function rilascia(){try{wakeLock&&wakeLock.release();}catch(e){}wakeLock=null;}
-document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&(T.int||T.allarme)){teniAcceso();tick();}});
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&(T.stato==='corre'||T.stato==='allarme')){teniAcceso();tick();}});
 function mmss(ms){const s=Math.max(0,Math.ceil(ms/1000));return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');}
-function fermaTutto(){clearInterval(T.int);clearInterval(T.allarme);T.int=null;T.allarme=null;T.fine=0;$('bannerTimer').hidden=true;rilascia();}
+function restante(){return T.stato==='corre'?T.fine-Date.now():T.stato==='pausa'?T.pausa:T.stato==='fermo'?T.min*60000:0;}
+function aggiornaBanner(){
+  const b=$('bannerTimer');
+  if(T.stato==='corre')b.textContent='⏱ Timer '+mmss(restante())+' – tocca per aprirlo';
+  else if(T.stato==='pausa')b.textContent='⏸ Timer in pausa '+mmss(T.pausa)+' – tocca per aprirlo';
+  else if(T.stato==='allarme')b.textContent='🔔 Pasta pronta! Tocca per fermare';
+  b.hidden=T.stato==='fermo'||!$('timer').hidden;
+}
+function aggiornaUI(){
+  $('bFerma').textContent={corre:'⏸ Ferma',pausa:'▶ Riprendi',fermo:'▶ Avvia',allarme:'🔕 Ferma allarme'}[T.stato];
+  $('tempo').textContent=mmss(restante());
+  aggiornaBanner();
+}
+function fermaIntervalli(){clearInterval(T.int);clearInterval(T.allarme);T.int=null;T.allarme=null;}
+function partenza(ms){T.fine=Date.now()+ms;T.avvisato=ms<=60000;T.stato='corre';T.int=setInterval(tick,250);teniAcceso();tick();}
 function avviaTimer(min,nome){
-  sbloccaAudio();fermaTutto();
-  T.fine=Date.now()+min*60000;T.nome=nome;T.avvisato=min<=1;
+  sbloccaAudio();fermaIntervalli();
+  T.min=min;T.nome=nome;
   $('timerNome').textContent=nome?'Timer: '+nome:'Timer';
-  T.int=setInterval(tick,250);teniAcceso();tick();
-  mostra('timer');parla('Timer avviato: '+minuti(min)+(nome?', '+nome:'')+'.');
+  partenza(min*60000);
+  if($('timer').hidden)mostra('timer');
+  parla('Timer avviato: '+minuti(min)+(nome?', '+nome:'')+'.');
 }
 function tick(){
-  if(!T.int)return;
+  if(T.stato!=='corre')return;
   const r=T.fine-Date.now();
   if(r<=0){finito();return;}
   if(!T.avvisato&&r<=60000){T.avvisato=true;parla('Manca un minuto. Assaggia la pasta.');vibra(400);}
-  $('tempo').textContent=mmss(r);
-  const b=$('bannerTimer');b.textContent='⏱ Timer '+mmss(r)+' – tocca per aprirlo';b.hidden=!$('timer').hidden;
+  aggiornaUI();
 }
 function finito(){
-  clearInterval(T.int);T.int=null;$('tempo').textContent='00:00';
-  $('bannerTimer').textContent='🔔 Pasta pronta! Tocca per fermare';$('bannerTimer').hidden=!$('timer').hidden;
+  fermaIntervalli();T.stato='allarme';aggiornaUI();
   parla('Pasta pronta! Scola la pasta.');vibra([600,300,600,300,600]);T.giri=0;
   T.allarme=setInterval(()=>{T.giri++;beep();vibra([600,300,600]);
-    if(T.giri%5===0)parla('Pasta pronta!');if(T.giri>=40)fermaTutto();},3000);
-  setTimeout(beep,2500);
+    if(T.giri%5===0)parla('Pasta pronta!');if(T.giri>=40)azzera(false);},3000);
+  setTimeout(()=>{if(T.stato==='allarme')beep();},2500);
 }
-$('bFerma').onclick=()=>{const eraAllarme=!!T.allarme;fermaTutto();parla(eraAllarme?'Allarme fermato.':'Timer fermato.');};
-// La voce parte circa 2 secondi dopo: diciamo il tempo che ci sarà quando parla
+function azzera(voce){fermaIntervalli();T.stato='fermo';rilascia();aggiornaUI();
+  if(voce)parla('Timer azzerato a '+minuti(T.min)+'. Premi Avvia per ripartire.');}
+$('bFerma').onclick=()=>{
+  if(T.stato==='corre'){T.pausa=Math.max(1000,T.fine-Date.now());fermaIntervalli();T.stato='pausa';rilascia();aggiornaUI();parla('Timer fermato. '+fraseMancano(0));}
+  else if(T.stato==='pausa'){sbloccaAudio();partenza(T.pausa);parla('Riprendo.');}
+  else if(T.stato==='allarme'){azzera(false);parla('Allarme fermato.');}
+  else if(T.min)avviaTimer(T.min,T.nome);
+  else parla('Nessun timer.');
+};
+$('bAzzera').onclick=()=>{if(!T.min){parla('Nessun timer.');return;}azzera(true);};
+$('bRiavvia').onclick=()=>{if(!T.min){parla('Nessun timer.');return;}avviaTimer(T.min,T.nome);};
+// La voce parte circa 2 secondi dopo: col timer in corsa diciamo il tempo che ci sarà quando parla
 const ANTICIPO_VOCE=2;
 function fraseMancano(extra){
-  const s=Math.ceil((T.fine-Date.now())/1000)-ANTICIPO_VOCE-(extra||0);
+  let s=Math.ceil(restante()/1000);
+  if(T.stato==='corre')s-=ANTICIPO_VOCE+(extra||0);
   if(s<=0)return 'Pochi secondi.';
   const m=Math.floor(s/60),x=s%60;
   const sec=x===1?'1 secondo':x+' secondi';
   const verbo=(m===1&&!x)||(!m&&x===1)?'Manca ':'Mancano ';
   return verbo+(m?minuti(m)+(x?' e ':''):'')+(x?sec:'')+'.';
 }
-$('bPiu').onclick=()=>{if(!T.int)return;T.fine+=60000;if(T.fine-Date.now()>60000)T.avvisato=false;tick();parla('Aggiunto un minuto. '+fraseMancano(1));};
-$('bMeno').onclick=()=>{if(!T.int)return;T.fine-=60000;tick();if(T.int)parla('Tolto un minuto. '+fraseMancano(1));};
+function cambiaMinuto(d){
+  const parola=(d>0?'Aggiunto':'Tolto')+' un minuto. ';
+  if(T.stato==='corre'){T.fine+=d*60000;if(T.fine-Date.now()>60000)T.avvisato=false;tick();if(T.stato==='corre')parla(parola+fraseMancano(1));}
+  else if(T.stato==='pausa'){T.pausa=Math.max(1000,T.pausa+d*60000);aggiornaUI();parla(parola+fraseMancano(0));}
+  else if(T.stato==='fermo'&&T.min){T.min=Math.min(60,Math.max(1,T.min+d));aggiornaUI();parla('Timer a '+minuti(T.min)+'.');}
+}
+$('bPiu').onclick=()=>cambiaMinuto(1);
+$('bMeno').onclick=()=>cambiaMinuto(-1);
 function quanto(){
-  if(T.allarme){parla('La pasta è pronta.');return;}
-  if(!T.int){parla('Nessun timer attivo.');return;}
+  if(T.stato==='allarme'){parla('La pasta è pronta.');return;}
+  if(T.stato==='pausa'){parla('Timer in pausa. '+fraseMancano(0));return;}
+  if(T.stato==='fermo'){parla(T.min?'Timer fermo a '+minuti(T.min)+'.':'Nessun timer attivo.');return;}
   parla(fraseMancano(0));
 }
 $('bQuanto').onclick=quanto;$('tempo').onclick=quanto;
