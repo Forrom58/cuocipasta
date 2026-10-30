@@ -26,6 +26,9 @@ button:focus-visible,h1:focus-visible,h2:focus-visible{outline:3px solid #fff;ou
 #avviso{min-height:1.3em;background:#1b1f24;padding:6px 10px;border-radius:8px;margin-bottom:8px;font-size:16px}
 .nota{color:#bbb;font-size:15px}
 #video{width:100%;max-height:55vh;object-fit:cover;border-radius:10px;border:1px solid var(--bordo);background:#111;margin-bottom:8px}
+.selettore{display:flex;align-items:center;gap:10px;margin:6px 0 4px}
+.selettore button{width:30%;flex:none;font-size:40px;line-height:1;text-align:center;margin:0;min-height:64px}
+#minLiberi{flex:1;text-align:center;font-size:64px;font-weight:700;color:var(--accento);font-variant-numeric:tabular-nums}
 [hidden]{display:none!important}
 </style>
 </head>
@@ -35,7 +38,7 @@ button:focus-visible,h1:focus-visible,h2:focus-visible{outline:3px solid #fff;ou
 
 <section id="home">
   <h1>CuociPasta</h1>
-  <p class="nota" id="versione">Versione 7</p>
+  <p class="nota" id="versione">Versione 8</p>
   <button class="primario" id="bParla">🎤 Parla: marca e pasta</button>
   <button class="primario" id="bScan">📷 Inquadra il codice a barre</button>
   <button id="bTimerLibero">⏱ Timer libero</button>
@@ -81,7 +84,12 @@ button:focus-visible,h1:focus-visible,h2:focus-visible{outline:3px solid #fff;ou
 
 <section id="libero" hidden>
   <h2>Timer libero</h2>
-  <div class="campo"><label for="minLiberi">Minuti</label><input id="minLiberi" type="number" inputmode="numeric" min="1" max="120" value="10"></div>
+  <div class="selettore">
+    <button id="bMinMeno" aria-label="Meno un minuto">−</button>
+    <div id="minLiberi" aria-live="polite">8</div>
+    <button id="bMinPiu" aria-label="Più un minuto">+</button>
+  </div>
+  <p class="nota" style="text-align:center;margin-top:-4px">minuti</p>
   <button class="primario" id="bAvviaLibero">▶ Avvia</button>
   <div class="riga"><button class="indietro">⬅ Indietro</button><button class="home">🏠 Home</button></div>
 </section>
@@ -348,8 +356,12 @@ function quanto(){
 }
 $('bQuanto').onclick=quanto;$('tempo').onclick=quanto;
 $('bannerTimer').onclick=()=>mostra('timer');
-$('bTimerLibero').onclick=()=>mostra('libero');
-$('bAvviaLibero').onclick=()=>{const n=parseInt($('minLiberi').value,10);if(n>=1&&n<=120)avviaTimer(n,'');else parla('Scrivi un numero di minuti da 1 a 120.');};
+let minLiberi=8;
+function mostraMinLiberi(voce){$('minLiberi').textContent=minLiberi;if(voce)parla(minuti(minLiberi));}
+$('bTimerLibero').onclick=()=>{minLiberi=8;mostraMinLiberi(false);mostra('libero');parla('Timer libero: 8 minuti. Usa più e meno.');};
+$('bMinPiu').onclick=()=>{if(minLiberi<60)minLiberi++;mostraMinLiberi(true);};
+$('bMinMeno').onclick=()=>{if(minLiberi>1)minLiberi--;mostraMinLiberi(true);};
+$('bAvviaLibero').onclick=()=>avviaTimer(minLiberi,'');
 
 /* ---------- codice a barre ---------- */
 let scanStream=null,scanAttivo=false,luce=false;

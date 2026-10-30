@@ -1,5 +1,5 @@
 // Cambiare il numero di versione a ogni aggiornamento dei file
-const CACHE = 'cuocipasta-v7';
+const CACHE = 'cuocipasta-v8';
 const FILES = ['./', './index.html', './manifest.json', './icon.svg'];
 
 self.addEventListener('install', e => {
