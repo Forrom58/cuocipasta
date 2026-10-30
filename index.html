@@ -240,15 +240,34 @@ function cerca(testo){
   });
   return max>0?ris:[];
 }
-function ascolta(){
+const ERRORI_VOCE={
+  'not-allowed':'Il microfono non è consentito. Apri le impostazioni del sito in Chrome e consenti il microfono.',
+  'service-not-allowed':'Il servizio vocale non è consentito. Controlla che sia attiva la digitazione vocale di Google.',
+  'no-speech':'Non ho sentito niente. Riprova.',
+  'audio-capture':'Il microfono non è disponibile, forse lo sta usando un\'altra app.',
+  'network':'Per riconoscere la voce serve la connessione internet.',
+  'language-not-supported':'La lingua italiana non è disponibile per la voce.'
+};
+let ascoltando=false;
+async function ascolta(){
   const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
   if(!SR){parla('Il riconoscimento vocale non è disponibile in questo browser.');return;}
+  if(ascoltando)return;
   sbloccaAudio();
-  const r=new SR();r.lang='it-IT';r.interimResults=false;r.maxAlternatives=3;
-  avviso('Ti ascolto… di\' marca e tipo di pasta, oppure "timer 8 minuti".');vibra(80);
-  r.onresult=e=>interpreta([...e.results[0]].map(a=>a.transcript));
-  r.onerror=e=>{if(e.error!=='aborted')parla('Non ho capito. Riprova.');};
-  try{r.start();}catch(e){}
+  if('speechSynthesis' in window)speechSynthesis.cancel();
+  // Chiede il permesso del microfono in modo esplicito, poi lo libera
+  try{
+    const s=await navigator.mediaDevices.getUserMedia({audio:true});
+    s.getTracks().forEach(t=>t.stop());
+  }catch(e){parla(ERRORI_VOCE['not-allowed']);return;}
+  await new Promise(r=>setTimeout(r,300));
+  const r=new SR();r.lang='it-IT';r.continuous=false;r.interimResults=false;r.maxAlternatives=3;
+  let gestito=false;ascoltando=true;
+  r.onstart=()=>{avviso('🎤 Ti ascolto… di\' marca e tipo di pasta, oppure "timer 8 minuti".');vibra(80);};
+  r.onresult=e=>{gestito=true;interpreta([...e.results[0]].map(a=>a.transcript));};
+  r.onerror=e=>{gestito=true;if(e.error==='aborted')return;parla((ERRORI_VOCE[e.error]||'Non ho capito. Riprova.')+' Codice errore: '+e.error+'.');};
+  r.onend=()=>{ascoltando=false;if(!gestito)parla(ERRORI_VOCE['no-speech']);};
+  try{r.start();}catch(e){ascoltando=false;parla('Non riesco ad avviare il microfono. Riprova.');}
 }
 function interpreta(alt){
   const testo=alt[0]||'';
