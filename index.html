@@ -10,21 +10,22 @@
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <style>
 html,body{background:#000;color:#fff;margin:0}
-:root{--giallo:#FFD400}
-body{font-family:system-ui,Roboto,Arial,sans-serif;font-size:26px;line-height:1.3;padding:12px 16px 40px}
-h1{font-size:36px;color:var(--giallo);margin:8px 0 16px}
-h2{font-size:32px;color:var(--giallo);margin:8px 0 12px}
-button{display:block;width:100%;min-height:80px;margin:0 0 14px;padding:14px;background:#1a1a1a;color:#fff;border:3px solid var(--giallo);border-radius:16px;font:inherit;font-weight:700;text-align:left}
-button.primario{background:var(--giallo);color:#000;text-align:center}
-button.pericolo{border-color:#ff5050}
-button:focus-visible,h1:focus-visible,h2:focus-visible{outline:5px solid #fff;outline-offset:3px}
-.riga{display:flex;gap:12px}.riga button{flex:1;text-align:center}
-.grande{font-size:42px;font-weight:800;color:var(--giallo);margin:6px 0}
-#tempo{font-size:110px;font-weight:800;text-align:center;font-variant-numeric:tabular-nums;color:var(--giallo);margin:10px 0;background:none;border:none;min-height:0}
-.campo{margin-bottom:16px}.campo label{display:block;margin-bottom:6px}
-.campo input,.campo textarea{width:100%;box-sizing:border-box;font:inherit;font-size:28px;padding:12px;background:#111;color:#fff;border:3px solid #fff;border-radius:12px}
-#avviso{min-height:1.3em;background:#222;padding:10px;border-radius:12px;margin-bottom:14px}
-.nota{color:#ddd;font-size:23px}
+:root{--accento:#D6B656;--accento-scuro:#B8973A}
+body{font-family:system-ui,Roboto,Arial,sans-serif;font-size:21px;line-height:1.3;padding:10px 14px 32px}
+h1{font-size:28px;color:var(--accento);margin:6px 0 12px}
+h2{font-size:24px;color:var(--accento);margin:6px 0 10px}
+button{display:block;width:100%;min-height:58px;margin:0 0 10px;padding:10px 14px;background:#1a1a1a;color:#eee;border:2px solid var(--accento-scuro);border-radius:12px;font:inherit;font-weight:700;text-align:left}
+button.primario{background:var(--accento-scuro);color:#000;border-color:var(--accento-scuro);text-align:center}
+button.pericolo{border-color:#c05050}
+button:focus-visible,h1:focus-visible,h2:focus-visible{outline:4px solid #fff;outline-offset:2px}
+.riga{display:flex;gap:10px}.riga button{flex:1;text-align:center}
+.grande{font-size:32px;font-weight:800;color:var(--accento);margin:4px 0}
+#tempo{font-size:88px;font-weight:800;text-align:center;font-variant-numeric:tabular-nums;color:var(--accento);margin:8px 0;background:none;border:none;min-height:0}
+.campo{margin-bottom:12px}.campo label{display:block;margin-bottom:4px}
+.campo input,.campo textarea{width:100%;box-sizing:border-box;font:inherit;font-size:22px;padding:10px;background:#111;color:#fff;border:2px solid #aaa;border-radius:10px}
+#avviso{min-height:1.3em;background:#222;padding:8px 10px;border-radius:10px;margin-bottom:10px;font-size:19px}
+.nota{color:#ccc;font-size:18px}
+#video{width:100%;max-height:55vh;object-fit:cover;border-radius:12px;border:2px solid var(--accento-scuro);background:#111;margin-bottom:10px}
 [hidden]{display:none!important}
 </style>
 </head>
@@ -35,6 +36,7 @@ button:focus-visible,h1:focus-visible,h2:focus-visible{outline:5px solid #fff;ou
 <section id="home">
   <h1>CuociPasta</h1>
   <button class="primario" id="bParla">🎤 Parla: marca e pasta</button>
+  <button class="primario" id="bScan">📷 Inquadra il codice a barre</button>
   <button id="bTimerLibero">⏱ Timer libero</button>
   <button id="bAggiungi">➕ Aggiungi una pasta</button>
   <h2>Marche</h2>
@@ -69,6 +71,13 @@ button:focus-visible,h1:focus-visible,h2:focus-visible{outline:5px solid #fff;ou
   <button class="indietro">⬅ Indietro (il timer continua)</button>
 </section>
 
+<section id="scan" hidden>
+  <h2>Inquadra il codice a barre</h2>
+  <video id="video" playsinline muted></video>
+  <button id="bLuce" hidden>💡 Accendi luce</button>
+  <button class="indietro">⬅ Annulla</button>
+</section>
+
 <section id="libero" hidden>
   <h2>Timer libero</h2>
   <div class="campo"><label for="minLiberi">Minuti</label><input id="minLiberi" type="number" inputmode="numeric" min="1" max="120" value="10"></div>
@@ -83,6 +92,7 @@ button:focus-visible,h1:focus-visible,h2:focus-visible{outline:5px solid #fff;ou
   <div class="campo"><label for="fCottura">Minuti di cottura</label><input id="fCottura" type="number" inputmode="numeric" min="1" max="60"></div>
   <div class="campo"><label for="fAlDente">Minuti al dente (se c'è)</label><input id="fAlDente" type="number" inputmode="numeric" min="1" max="60"></div>
   <div class="campo"><label for="fNote">Note</label><textarea id="fNote" rows="2"></textarea></div>
+  <p class="nota" id="fEan"></p>
   <button class="primario" id="bSalva">💾 Salva</button>
   <button class="indietro">⬅ Annulla</button>
 </section>
@@ -122,6 +132,8 @@ function minuti(n){return n===1?'1 minuto':n+' minuti';}
 
 /* ---------- navigazione ---------- */
 function mostra(id,push=true){
+  if(id!=='scan')fermaScan();
+  if(id==='scan'&&!push)id='home';
   document.querySelectorAll('section').forEach(s=>s.hidden=s.id!==id);
   if(push)history.pushState({s:id},'');
   if(id==='home')renderHome();
@@ -182,8 +194,11 @@ $('bElimina').onclick=()=>{
 };
 
 /* ---------- aggiungi / modifica ---------- */
+let eanInAttesa=null;
 function apriModifica(p,pref){
   corrente=p?p.id:null;
+  eanInAttesa=(pref&&pref.ean)||null;
+  $('fEan').textContent=eanInAttesa?'Codice a barre: '+eanInAttesa:'';
   $('modTitolo').textContent=p?'Modifica pasta':'Nuova pasta';
   $('fMarca').value=p?p.marca:((pref&&pref.marca)||'');
   $('fNome').value=p?p.nome:((pref&&pref.nome)||'');
@@ -200,7 +215,9 @@ $('bSalva').onclick=()=>{
   if(!(cot>=1&&cot<=60)){parla('Scrivi i minuti di cottura, da 1 a 60.');return;}
   const dati={marca,nome,cottura:cot,alDente:(ad>=1&&ad<=60)?ad:null,note:$('fNote').value.trim()};
   if(corrente){paste=paste.map(x=>x.id===corrente?{...x,...dati}:x);}
-  else{corrente='u'+Date.now();paste.push({id:corrente,...dati});}
+  else{corrente='u'+Date.now();paste.push({id:corrente,...dati,ean:[]});}
+  if(eanInAttesa)associa(corrente,eanInAttesa);
+  eanInAttesa=null;
   salva(paste);
   history.replaceState({s:'scheda'},'');mostra('scheda',false);parla('Salvata. '+marca+', '+nome+', '+minuti(cot)+'.');
 };
@@ -301,6 +318,86 @@ $('bQuanto').onclick=quanto;$('tempo').onclick=quanto;
 $('bannerTimer').onclick=()=>mostra('timer');
 $('bTimerLibero').onclick=()=>mostra('libero');
 $('bAvviaLibero').onclick=()=>{const n=parseInt($('minLiberi').value,10);if(n>=1&&n<=120)avviaTimer(n,'');else parla('Scrivi un numero di minuti da 1 a 120.');};
+
+/* ---------- codice a barre ---------- */
+let scanStream=null,scanAttivo=false,luce=false;
+function associa(id,code){
+  paste=paste.map(x=>{if(x.id!==id)return x;const e=new Set(x.ean||[]);e.add(code);return {...x,ean:[...e]};});
+  salva(paste);
+}
+function beepCorto(){if(!audioCtx)return;const t=audioCtx.currentTime,o=audioCtx.createOscillator(),g=audioCtx.createGain();
+  o.frequency.value=1200;g.gain.setValueAtTime(0.25,t);g.gain.exponentialRampToValueAtTime(0.001,t+0.15);o.connect(g);g.connect(audioCtx.destination);o.start(t);o.stop(t+0.16);}
+function fermaScan(){
+  scanAttivo=false;luce=false;
+  if(scanStream){scanStream.getTracks().forEach(t=>t.stop());scanStream=null;}
+  const v=$('video');if(v)v.srcObject=null;
+}
+async function avviaScan(){
+  sbloccaAudio();
+  if(!('BarcodeDetector' in window)){parla('Questo browser non sa leggere i codici a barre. Usa Chrome.');return;}
+  let det;
+  try{
+    const ok=await BarcodeDetector.getSupportedFormats();
+    const f=['ean_13','ean_8','upc_a','upc_e'].filter(x=>ok.includes(x));
+    if(!f.length)throw 0;
+    det=new BarcodeDetector({formats:f});
+  }catch(e){parla('Questo telefono non sa leggere i codici a barre.');return;}
+  mostra('scan');
+  try{
+    scanStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'},width:{ideal:1280}},audio:false});
+    const v=$('video');v.srcObject=scanStream;await v.play();scanAttivo=true;
+    const tr=scanStream.getVideoTracks()[0];
+    const cap=tr.getCapabilities?tr.getCapabilities():{};
+    $('bLuce').hidden=!cap.torch;$('bLuce').textContent='💡 Accendi luce';
+    parla('Inquadra il codice a barre. Avvicina e allontana piano la confezione.');
+    const giro=async()=>{
+      if(!scanAttivo)return;
+      try{const c=await det.detect(v);if(c.length&&c[0].rawValue){const code=c[0].rawValue;fermaScan();beepCorto();vibra(150);trovatoCodice(code);return;}}catch(e){}
+      setTimeout(giro,200);
+    };
+    giro();
+  }catch(e){fermaScan();parla('Non riesco ad aprire la fotocamera. Controlla i permessi.');}
+}
+$('bScan').onclick=avviaScan;
+$('bLuce').onclick=async()=>{
+  try{const tr=scanStream&&scanStream.getVideoTracks()[0];if(!tr)return;luce=!luce;
+    await tr.applyConstraints({advanced:[{torch:luce}]});$('bLuce').textContent=luce?'💡 Spegni luce':'💡 Accendi luce';}catch(e){}
+};
+async function trovatoCodice(code){
+  const p=paste.find(x=>(x.ean||[]).includes(code));
+  if(p){history.replaceState({s:'home'},'');apriScheda(p.id);return;}
+  parla('Codice letto. Cerco il prodotto.');
+  let info=null;
+  try{
+    const r=await fetch('https://world.openfoodfacts.org/api/v2/product/'+encodeURIComponent(code)+'.json?fields=product_name,product_name_it,brands');
+    const j=await r.json();
+    if(j.status===1&&j.product){
+      const pr=j.product;
+      info={marca:(pr.brands||'').split(',')[0].trim(),nome:(pr.product_name_it||pr.product_name||'').trim()};
+      if(!info.marca&&!info.nome)info=null;
+    }
+  }catch(e){}
+  history.replaceState({s:'home'},'');
+  if(!info){
+    apriModifica(null,{ean:code});
+    parla('Prodotto non trovato. Scrivi marca, tipo di pasta e minuti. Dalla prossima volta lo riconoscerò.');
+    return;
+  }
+  const nm=norm(info.marca).join(' ');
+  const cand=cerca(info.marca+' '+info.nome).filter(x=>!nm||norm(x.marca).join(' ')===nm);
+  const frase='Ho riconosciuto: '+(info.marca+' '+info.nome).trim()+'.';
+  if(cand.length){
+    $('titoloElenco').textContent='È una di queste?';
+    const box=$('listaElenco');box.innerHTML='';
+    cand.forEach(x=>box.appendChild(btn(x.marca+' – '+x.nome+' · '+x.cottura+' min',()=>{associa(x.id,code);apriScheda(x.id);})));
+    box.appendChild(btn('➕ No, è una pasta nuova',()=>apriModifica(null,{...info,ean:code})));
+    mostra('elenco');
+    parla(frase+' È una di queste? '+cand.map(x=>x.marca+' '+x.nome).join(', ')+'. Oppure è una pasta nuova.');
+    return;
+  }
+  apriModifica(null,{...info,ean:code});
+  parla(frase+' Il codice a barre non contiene il tempo di cottura: scrivi i minuti una volta sola, poi la riconoscerò sempre.');
+}
 
 /* ---------- backup ---------- */
 $('bBackup').onclick=()=>mostra('backup');
