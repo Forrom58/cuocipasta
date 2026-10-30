@@ -1,6 +1,6 @@
 // Cambiare il numero di versione a ogni aggiornamento dei file
-const CACHE = 'cuocipasta-v20';
-const FILES = ['./', './index.html', './manifest.json', './icon.svg'];
+const CACHE = 'cuocipasta-v21';
+const FILES = ['./', './index.html', './manifest.json', './icon-192.png', './icon-512.png'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(FILES)));
