@@ -1,5 +1,5 @@
 // Cambiare il numero di versione a ogni aggiornamento dei file
-const CACHE = 'cuocipasta-v5';
+const CACHE = 'cuocipasta-v6';
 const FILES = ['./', './index.html', './manifest.json', './icon.svg'];
 
 self.addEventListener('install', e => {
@@ -15,11 +15,11 @@ self.addEventListener('activate', e => {
   );
 });
 
-// Prima la rete (così vedi subito gli aggiornamenti), senza rete usa la copia salvata
+// Prima la rete, sempre ricontrollata (no-cache): così gli aggiornamenti arrivano subito. Senza rete usa la copia salvata
 self.addEventListener('fetch', e => {
   if (e.request.method !== 'GET') return;
   e.respondWith(
-    fetch(e.request)
+    fetch(e.request, { cache: 'no-cache' })
       .then(r => {
         const copia = r.clone();
         caches.open(CACHE).then(c => c.put(e.request, copia));

@@ -35,6 +35,7 @@ button:focus-visible,h1:focus-visible,h2:focus-visible{outline:3px solid #fff;ou
 
 <section id="home">
   <h1>CuociPasta</h1>
+  <p class="nota" id="versione">Versione 6</p>
   <button class="primario" id="bParla">🎤 Parla: marca e pasta</button>
   <button class="primario" id="bScan">📷 Inquadra il codice a barre</button>
   <button id="bTimerLibero">⏱ Timer libero</button>
@@ -444,7 +445,11 @@ $('fileImporta').onchange=e=>{
 
 /* ---------- avvio ---------- */
 renderHome();
-if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
+if('serviceWorker' in navigator){
+  let ricaricato=false;
+  navigator.serviceWorker.addEventListener('controllerchange',()=>{if(!ricaricato){ricaricato=true;location.reload();}});
+  navigator.serviceWorker.register('sw.js',{updateViaCache:'none'}).then(r=>r.update()).catch(()=>{});
+}
 </script>
 </body>
 </html>
