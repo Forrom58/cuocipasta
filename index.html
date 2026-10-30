@@ -38,7 +38,7 @@ button:focus-visible,h1:focus-visible,h2:focus-visible{outline:3px solid #fff;ou
 
 <section id="home">
   <h1>CuociPasta</h1>
-  <p class="nota" id="versione">Versione 8</p>
+  <p class="nota" id="versione">Versione 9</p>
   <button class="primario" id="bParla">🎤 Parla: marca e pasta</button>
   <button class="primario" id="bScan">📷 Inquadra il codice a barre</button>
   <button id="bTimerLibero">⏱ Timer libero</button>
@@ -342,17 +342,22 @@ function finito(){
   setTimeout(beep,2500);
 }
 $('bFerma').onclick=()=>{const eraAllarme=!!T.allarme;fermaTutto();parla(eraAllarme?'Allarme fermato.':'Timer fermato.');};
-$('bPiu').onclick=()=>{if(!T.int)return;T.fine+=60000;if(T.fine-Date.now()>60000)T.avvisato=false;tick();parla('Aggiunto un minuto. Mancano '+mmss(T.fine-Date.now()).replace(':',' minuti e ')+' secondi.');};
-$('bMeno').onclick=()=>{if(!T.int)return;T.fine-=60000;tick();if(T.int)parla('Tolto un minuto.');};
+// La voce parte circa 2 secondi dopo: diciamo il tempo che ci sarà quando parla
 const ANTICIPO_VOCE=2;
+function fraseMancano(extra){
+  const s=Math.ceil((T.fine-Date.now())/1000)-ANTICIPO_VOCE-(extra||0);
+  if(s<=0)return 'Pochi secondi.';
+  const m=Math.floor(s/60),x=s%60;
+  const sec=x===1?'1 secondo':x+' secondi';
+  const verbo=(m===1&&!x)||(!m&&x===1)?'Manca ':'Mancano ';
+  return verbo+(m?minuti(m)+(x?' e ':''):'')+(x?sec:'')+'.';
+}
+$('bPiu').onclick=()=>{if(!T.int)return;T.fine+=60000;if(T.fine-Date.now()>60000)T.avvisato=false;tick();parla('Aggiunto un minuto. '+fraseMancano(1));};
+$('bMeno').onclick=()=>{if(!T.int)return;T.fine-=60000;tick();if(T.int)parla('Tolto un minuto. '+fraseMancano(1));};
 function quanto(){
   if(T.allarme){parla('La pasta è pronta.');return;}
   if(!T.int){parla('Nessun timer attivo.');return;}
-  // La voce parte circa 2 secondi dopo: diciamo il tempo che ci sarà quando parla
-  const s=Math.ceil((T.fine-Date.now())/1000)-ANTICIPO_VOCE;
-  if(s<=0){parla('Pochi secondi.');return;}
-  const m=Math.floor(s/60),x=s%60;
-  parla('Mancano '+(m?minuti(m)+(x?' e ':''):'')+(x?x+' secondi':'')+'.');
+  parla(fraseMancano(0));
 }
 $('bQuanto').onclick=quanto;$('tempo').onclick=quanto;
 $('bannerTimer').onclick=()=>mostra('timer');
