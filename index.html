@@ -42,13 +42,17 @@ button.spento{opacity:.35;border-style:dashed}
   display:flex;align-items:center;justify-content:center;z-index:2;background:#5E2618;color:var(--crema);border:2px solid #D9A090;
   box-shadow:0 0 0 6px #000,0 0 18px 8px rgba(217,160,144,.25)}
 .pad-mic .ic{width:45px;height:45px}
-.pad-r{position:absolute;bottom:0;width:calc(50% - 5px);height:90px;border-radius:17px;border:none;background:#2E2826;color:#D9A090;
-  display:flex;flex-direction:column;align-items:center;justify-content:center;padding:14px 0 0;box-sizing:border-box;font-size:16px;line-height:1.1;text-align:center}
-.pad-r .ic{width:22px;height:22px;margin-bottom:5px}
+.pad-r{position:absolute;bottom:0;width:calc(50% - 5px);height:90px;border-radius:17px;border:none;background:#36302D;color:#D9A090;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;padding:14px 0 0;box-sizing:border-box;font-size:18px;line-height:1.1;text-align:center}
+.pad-r .ic{width:26px;height:26px;margin-bottom:5px}
 .pad-sx{left:0}.pad-dx{right:0}
 .pad button:focus-visible{outline:3px solid var(--crema);outline-offset:3px}
-.pad-mic:active{background:#74301F}.pad-r:active{background:#3A3330}
+.pad-mic:active{background:#74301F}.pad-r:active{background:#423B37}
 #titoloMarche{margin-top:30px}
+#bAggiungi{border:none;text-align:center;display:flex;align-items:center;justify-content:center}
+#bAggiungi .piu{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;background:#5E2618;border:2px solid #D9A090;color:var(--crema);font-size:22px;font-weight:700;line-height:1;margin-right:12px;box-sizing:border-box}
+#listaMarche button{background:#36302D;border:none}
+#bBackup{text-align:center}
 [hidden]{display:none!important}
 </style>
 </head>
@@ -57,13 +61,13 @@ button.spento{opacity:.35;border-style:dashed}
 <button id="bannerTimer" class="primario" hidden></button>
 
 <section id="home">
-  <h1 class="titolo"><svg class="logo" viewBox="100 100 312 272" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="22" stroke-linecap="round" stroke-linejoin="round"><path d="M222 228 L186 128 M246 228 L226 116 M270 228 L262 122"/><path d="M124 228 H388"/><path d="M146 228 V318 a42 42 0 0 0 42 42 H324 a42 42 0 0 0 42-42 V228"/><path d="M146 258 H112 M366 258 H400"/><path d="M330 176 c-16-18 16-30 0-52 M364 186 c-14-16 14-26 0-44" stroke-width="16"/></svg>CuociPasta<span id="versione" aria-hidden="true">v27</span></h1>
+  <h1 class="titolo"><svg class="logo" viewBox="100 100 312 272" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="22" stroke-linecap="round" stroke-linejoin="round"><path d="M222 228 L186 128 M246 228 L226 116 M270 228 L262 122"/><path d="M124 228 H388"/><path d="M146 228 V318 a42 42 0 0 0 42 42 H324 a42 42 0 0 0 42-42 V228"/><path d="M146 258 H112 M366 258 H400"/><path d="M330 176 c-16-18 16-30 0-52 M364 186 c-14-16 14-26 0-44" stroke-width="16"/></svg>CuociPasta<span id="versione" aria-hidden="true">v29</span></h1>
   <div class="pad">
     <button id="bParla" class="pad-mic" aria-label="Parla: marca e pasta"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21"/></svg></button>
     <button id="bScan" class="pad-r pad-sx" aria-label="Inquadra il codice a barre"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7V5h3M17 5h3v2M20 17v2h-3M7 19H4v-2"/><path d="M7.5 9v6M10 9v6M12.5 9v6M14 9v6M16.5 9v6"/></svg>Inquadra</button>
     <button id="bTimerLibero" class="pad-r pad-dx" aria-label="Timer libero"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="13.5" r="7"/><path d="M12 13.5V10M10 3h4M18 7l1.5-1.5"/></svg>Timer</button>
   </div>
-  <button id="bAggiungi">➕ Aggiungi una pasta</button>
+  <button id="bAggiungi"><span class="piu" aria-hidden="true">+</span>Aggiungi una pasta</button>
   <h2 id="titoloMarche">Marche</h2>
   <div id="listaMarche"></div>
   <button id="bBackup">💾 Salva o ripristina elenco</button>
