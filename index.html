@@ -54,6 +54,23 @@ button.spento{opacity:.35;border-style:dashed}
 #bAggiungi .piu,#bBackup .piu{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;background:#5E2618;border:2px solid #D9A090;color:var(--crema);font-size:22px;font-weight:700;line-height:1;margin-right:12px;box-sizing:border-box}
 #listaMarche button{background:#36302D;border:none}
 #bBackup{background:#36302D;width:100%;box-sizing:border-box;border:none;text-align:center;display:flex;align-items:center;justify-content:center;margin-top:16px}
+/* pagine interne */
+section{min-height:calc(100dvh - 16px);display:flex;flex-direction:column}
+section>.riga:last-child{margin-top:auto;padding-top:10px}
+.indietro,.home,#bQuanto,#bAzzera,#bRiavvia{background:#36302D;border:none;display:flex;align-items:center;justify-content:center;text-align:center}
+.cer{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;background:#5E2618;border:2px solid #D9A090;box-sizing:border-box;margin-right:12px;flex:none}
+.cer svg{width:15px;height:15px;fill:none;stroke:var(--crema);stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+#listaElenco button.voce{background:#36302D;border:none;display:flex;align-items:center}
+#listaElenco .min{margin-left:auto;padding-left:10px;color:#D9A090;font-weight:500}
+.blocco{position:relative;height:258px;margin-bottom:10px}
+#tempo{position:absolute;top:0;left:0;right:0;width:auto;height:138px;margin:0;padding:2px 0 0;border:none;border-radius:18px;background:#36302D;color:var(--crema);font-size:72px;font-weight:700;line-height:1;display:flex;align-items:center;justify-content:center;font-variant-numeric:tabular-nums}
+#bFerma{position:absolute;left:50%;top:112px;transform:translateX(-50%);width:104px;height:104px;min-height:0;margin:0;padding:0;border-radius:50%;z-index:2;
+  background:#5E2618;color:var(--crema);border:2px solid #D9A090;box-shadow:0 0 0 6px #000,0 0 18px 8px rgba(217,160,144,.25);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:15px;font-weight:600}
+#bFerma svg{width:34px;height:34px;fill:var(--crema);margin-bottom:2px}
+#bFerma:active{background:#74301F}
+.sotto{position:absolute;bottom:0;width:calc(50% - 5px);height:62px;min-height:0;margin:0;padding:0;border:none;border-radius:18px;background:#36302D;color:var(--crema);font-size:19px;display:flex;align-items:center;justify-content:center}
+.sotto.sx{left:0}.sotto.dx{right:0}
 [hidden]{display:none!important}
 </style>
 </head>
@@ -62,7 +79,7 @@ button.spento{opacity:.35;border-style:dashed}
 <button id="bannerTimer" class="primario" hidden></button>
 
 <section id="home">
-  <h1 class="titolo"><svg class="logo" viewBox="100 100 312 272" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="22" stroke-linecap="round" stroke-linejoin="round"><path d="M222 228 L186 128 M246 228 L226 116 M270 228 L262 122"/><path d="M124 228 H388"/><path d="M146 228 V318 a42 42 0 0 0 42 42 H324 a42 42 0 0 0 42-42 V228"/><path d="M146 258 H112 M366 258 H400"/><path d="M330 176 c-16-18 16-30 0-52 M364 186 c-14-16 14-26 0-44" stroke-width="16"/></svg>CuociPasta<span id="versione" aria-hidden="true">v32</span></h1>
+  <h1 class="titolo"><svg class="logo" viewBox="100 100 312 272" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="22" stroke-linecap="round" stroke-linejoin="round"><path d="M222 228 L186 128 M246 228 L226 116 M270 228 L262 122"/><path d="M124 228 H388"/><path d="M146 228 V318 a42 42 0 0 0 42 42 H324 a42 42 0 0 0 42-42 V228"/><path d="M146 258 H112 M366 258 H400"/><path d="M330 176 c-16-18 16-30 0-52 M364 186 c-14-16 14-26 0-44" stroke-width="16"/></svg>CuociPasta<span id="versione" aria-hidden="true">v33</span></h1>
   <div class="pad">
     <button id="bParla" class="pad-mic" aria-label="Parla: marca e pasta"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21"/></svg></button>
     <button id="bScan" class="pad-r pad-sx" aria-label="Inquadra il codice a barre"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7V5h3M17 5h3v2M20 17v2h-3M7 19H4v-2"/><path d="M7.5 9v6M10 9v6M12.5 9v6M14 9v6M16.5 9v6"/></svg>Inquadra</button>
@@ -77,7 +94,7 @@ button.spento{opacity:.35;border-style:dashed}
 <section id="elenco" hidden>
   <h2 id="titoloElenco"></h2>
   <div id="listaElenco"></div>
-  <div class="riga"><button class="indietro">⬅ Indietro</button><button class="home">🏠 Home</button></div>
+  <div class="riga"><button class="indietro"><span class="cer" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6"/></svg></span>Indietro</button><button class="home"><span class="cer" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 11l8-7 8 7M6 10v9h12v-9"/></svg></span>Home</button></div>
 </section>
 
 <section id="scheda" hidden>
@@ -89,24 +106,26 @@ button.spento{opacity:.35;border-style:dashed}
   <button id="bRileggi">🔊 Rileggi</button>
   <button id="bModifica">✏️ Modifica</button>
   <button id="bElimina" class="pericolo">🗑 Elimina</button>
-  <div class="riga"><button class="indietro">⬅ Indietro</button><button class="home">🏠 Home</button></div>
+  <div class="riga"><button class="indietro"><span class="cer" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6"/></svg></span>Indietro</button><button class="home"><span class="cer" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 11l8-7 8 7M6 10v9h12v-9"/></svg></span>Home</button></div>
 </section>
 
 <section id="timer" hidden>
   <h2 id="timerNome">Timer</h2>
-  <button id="tempo" aria-label="Tempo rimanente, tocca per sentirlo">00:00</button>
-  <button class="primario" id="bFerma">⏸ Ferma</button>
+  <div class="blocco">
+    <button id="tempo" aria-label="Tempo rimanente, tocca per sentirlo">00:00</button>
+    <button id="bFerma" aria-label="Ferma"></button>
+    <button id="bMeno" class="sotto sx">−1 min</button><button id="bPiu" class="sotto dx">+1 min</button>
+  </div>
   <div class="riga"><button id="bAzzera">↺ Azzera</button><button id="bRiavvia">⟳ Riavvia</button></div>
-  <div class="riga"><button id="bMeno">−1 min</button><button id="bPiu">+1 min</button></div>
-  <button id="bQuanto">🔊 Quanto manca?</button>
-  <div class="riga"><button class="indietro">⬅ Indietro</button><button class="home">🏠 Home</button></div>
+  <button id="bQuanto"><span class="cer" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9zM16 9a4 4 0 0 1 0 6"/></svg></span>Quanto manca?</button>
+  <div class="riga"><button class="indietro"><span class="cer" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6"/></svg></span>Indietro</button><button class="home"><span class="cer" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 11l8-7 8 7M6 10v9h12v-9"/></svg></span>Home</button></div>
 </section>
 
 <section id="scan" hidden>
   <h2>Inquadra il codice a barre</h2>
   <video id="video" playsinline muted></video>
   <button id="bLuce" hidden>💡 Accendi luce</button>
-  <div class="riga"><button class="indietro">⬅ Annulla</button><button class="home">🏠 Home</button></div>
+  <div class="riga"><button class="indietro"><span class="cer" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6"/></svg></span>Annulla</button><button class="home"><span class="cer" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 11l8-7 8 7M6 10v9h12v-9"/></svg></span>Home</button></div>
 </section>
 
 <section id="libero" hidden>
@@ -118,7 +137,7 @@ button.spento{opacity:.35;border-style:dashed}
   </div>
   <p class="nota" style="text-align:center;margin-top:-4px">minuti</p>
   <button class="primario" id="bAvviaLibero">▶ Avvia</button>
-  <div class="riga"><button class="indietro">⬅ Indietro</button><button class="home">🏠 Home</button></div>
+  <div class="riga"><button class="indietro"><span class="cer" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6"/></svg></span>Indietro</button><button class="home"><span class="cer" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 11l8-7 8 7M6 10v9h12v-9"/></svg></span>Home</button></div>
 </section>
 
 <section id="modifica" hidden>
@@ -130,7 +149,7 @@ button.spento{opacity:.35;border-style:dashed}
   <div class="campo"><label for="fNote">Note</label><textarea id="fNote" rows="2"></textarea></div>
   <p class="nota" id="fEan"></p>
   <button class="primario" id="bSalva">💾 Salva</button>
-  <div class="riga"><button class="indietro">⬅ Annulla</button><button class="home">🏠 Home</button></div>
+  <div class="riga"><button class="indietro"><span class="cer" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6"/></svg></span>Annulla</button><button class="home"><span class="cer" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 11l8-7 8 7M6 10v9h12v-9"/></svg></span>Home</button></div>
 </section>
 
 <section id="backup" hidden>
@@ -139,7 +158,7 @@ button.spento{opacity:.35;border-style:dashed}
   <button id="bEsporta">⬇ Salva file di backup</button>
   <button id="bImporta">⬆ Ripristina da file</button>
   <input id="fileImporta" type="file" accept=".json,application/json" hidden>
-  <div class="riga"><button class="indietro">⬅ Indietro</button><button class="home">🏠 Home</button></div>
+  <div class="riga"><button class="indietro"><span class="cer" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6"/></svg></span>Indietro</button><button class="home"><span class="cer" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 11l8-7 8 7M6 10v9h12v-9"/></svg></span>Home</button></div>
 </section>
 
 <script>
@@ -273,7 +292,12 @@ function apriMarca(m){
 }
 function mostraElenco(lista,conMarca){
   const box=$('listaElenco');box.innerHTML='';
-  lista.forEach(p=>box.appendChild(btn((conMarca?p.marca+' – ':'')+p.nome+' · '+p.cottura+' min',()=>apriScheda(p.id))));
+  lista.forEach(p=>{
+    const b=btn('',()=>apriScheda(p.id));b.classList.add('voce');
+    const n=document.createElement('span');n.textContent=(conMarca?p.marca+' – ':'')+p.nome;
+    const m=document.createElement('span');m.className='min';m.textContent=p.cottura+' min';
+    b.append(n,m);b.setAttribute('aria-label',n.textContent+', '+p.cottura+' minuti');box.appendChild(b);
+  });
   mostra('elenco');
 }
 
@@ -434,8 +458,12 @@ function aggiornaBanner(){
   else if(T.stato==='allarme')b.textContent='🔔 Pasta pronta! Tocca per fermare';
   b.hidden=T.stato==='fermo'||!$('timer').hidden;
 }
+const ICO_PLAY='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>';
+const ICO_PAUSA='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5h3v14H7zM14 5h3v14h-3z"/></svg>';
+const ICO_STOP='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6h12v12H6z"/></svg>';
 function aggiornaUI(){
-  $('bFerma').textContent={corre:'⏸ Ferma',pausa:'▶ Riprendi',fermo:'▶ Avvia',allarme:'🔕 Ferma allarme'}[T.stato];
+  const st={corre:[ICO_PAUSA,'Ferma','Ferma'],pausa:[ICO_PLAY,'Riprendi','Riprendi'],fermo:[ICO_PLAY,'Avvia','Avvia'],allarme:[ICO_STOP,'Ferma','Ferma allarme']}[T.stato];
+  $('bFerma').innerHTML=st[0]+'<span>'+st[1]+'</span>';$('bFerma').setAttribute('aria-label',st[2]);
   $('tempo').textContent=mmss(restante());
   const bloccati=T.stato==='corre'||T.stato==='allarme';
   ['bAzzera','bRiavvia'].forEach(id=>{$(id).classList.toggle('spento',bloccati);$(id).setAttribute('aria-disabled',bloccati);});
@@ -446,7 +474,7 @@ function partenza(ms){T.fine=Date.now()+ms;T.avvisato=ms<=60000;T.stato='corre';
 function avviaTimer(min,nome){
   sbloccaAudio();fermaIntervalli();
   T.min=min;T.nome=nome;
-  $('timerNome').textContent=nome?'Timer: '+nome:'Timer';
+  $('timerNome').textContent=nome?'Timer: '+nome:'Timer libero';
   partenza(min*60000);
   if($('timer').hidden)mostra('timer');
   parla('Timer avviato: '+minuti(min)+(nome?', '+nome:'')+'.');
@@ -512,7 +540,13 @@ $('bQuanto').onclick=quanto;$('tempo').onclick=quanto;
 $('bannerTimer').onclick=()=>mostra('timer');
 let minLiberi=8;
 function mostraMinLiberi(voce){$('minLiberi').textContent=minLiberi;if(voce)parla(minuti(minLiberi));}
-$('bTimerLibero').onclick=()=>{minLiberi=8;mostraMinLiberi(false);mostra('libero');parla('Timer libero: 8 minuti. Usa più e meno.');};
+// Timer libero = stessa pagina del timer, ferma a 8 minuti. Se c'è già un timer attivo, apre quello senza perderlo.
+$('bTimerLibero').onclick=()=>{
+  if(T.stato!=='fermo'){mostra('timer');quanto();return;}
+  fermaIntervalli();T.stato='fermo';T.min=8;T.nome='';
+  $('timerNome').textContent='Timer libero';aggiornaUI();mostra('timer');
+  parla('Timer libero: 8 minuti. Usa meno uno e più uno, poi Avvia.');
+};
 $('bMinPiu').onclick=()=>{if(minLiberi<60)minLiberi++;mostraMinLiberi(true);};
 $('bMinMeno').onclick=()=>{if(minLiberi>1)minLiberi--;mostraMinLiberi(true);};
 $('bAvviaLibero').onclick=()=>avviaTimer(minLiberi,'');
