@@ -35,19 +35,20 @@ button:focus-visible,h1:focus-visible,h2:focus-visible{outline:3px solid var(--c
 #minLiberi{flex:1;text-align:center;font-size:64px;font-weight:700;color:var(--crema);font-variant-numeric:tabular-nums}
 button.spento{opacity:.35;border-style:dashed}
 /* pulsantiera stile DAISY: microfono grande al centro, due riquadri sotto */
-.pad{position:relative;height:270px;margin:4px 0 14px}
+.pad{position:relative;height:195px;margin:4px 0 12px}
 .pad button{margin:0;padding:0;font-weight:500}
 .pad .ic{fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
-.pad-mic{position:absolute;left:50%;top:30px;transform:translateX(-50%);width:150px;height:150px;min-height:0;border-radius:50%;
+.pad-mic{position:absolute;left:50%;top:21px;transform:translateX(-50%);width:105px;height:105px;min-height:0;border-radius:50%;
   display:flex;align-items:center;justify-content:center;z-index:2;background:#5E2618;color:var(--crema);border:2px solid #D9A090;
-  box-shadow:0 0 0 9px #000,0 0 26px 12px rgba(217,160,144,.25)}
-.pad-mic .ic{width:64px;height:64px}
-.pad-r{position:absolute;bottom:0;width:calc(50% - 5px);height:120px;border-radius:24px;border:none;background:#221D1B;color:#D9A090;
-  display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding-bottom:16px;box-sizing:border-box;font-size:18px;text-align:center}
-.pad-r .ic{width:30px;height:30px;margin-bottom:6px}
+  box-shadow:0 0 0 6px #000,0 0 18px 8px rgba(217,160,144,.25)}
+.pad-mic .ic{width:45px;height:45px}
+.pad-r{position:absolute;bottom:0;width:calc(50% - 5px);height:90px;border-radius:17px;border:none;background:#221D1B;color:#D9A090;
+  display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding-bottom:14px;box-sizing:border-box;font-size:16px;line-height:1.1;text-align:center}
+.pad-r .ic{width:22px;height:22px;margin-bottom:5px}
 .pad-sx{left:0}.pad-dx{right:0}
 .pad button:focus-visible{outline:3px solid var(--crema);outline-offset:3px}
 .pad-mic:active{background:#74301F}.pad-r:active{background:#2E2724}
+#titoloMarche{margin-top:34px;padding-top:14px;border-top:1px solid #3A2A24}
 [hidden]{display:none!important}
 </style>
 </head>
@@ -56,14 +57,14 @@ button.spento{opacity:.35;border-style:dashed}
 <button id="bannerTimer" class="primario" hidden></button>
 
 <section id="home">
-  <h1 class="titolo"><svg class="logo" viewBox="100 100 312 272" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="22" stroke-linecap="round" stroke-linejoin="round"><path d="M222 228 L186 128 M246 228 L226 116 M270 228 L262 122"/><path d="M124 228 H388"/><path d="M146 228 V318 a42 42 0 0 0 42 42 H324 a42 42 0 0 0 42-42 V228"/><path d="M146 258 H112 M366 258 H400"/><path d="M330 176 c-16-18 16-30 0-52 M364 186 c-14-16 14-26 0-44" stroke-width="16"/></svg>CuociPasta<span id="versione" aria-hidden="true">v24</span></h1>
+  <h1 class="titolo"><svg class="logo" viewBox="100 100 312 272" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="22" stroke-linecap="round" stroke-linejoin="round"><path d="M222 228 L186 128 M246 228 L226 116 M270 228 L262 122"/><path d="M124 228 H388"/><path d="M146 228 V318 a42 42 0 0 0 42 42 H324 a42 42 0 0 0 42-42 V228"/><path d="M146 258 H112 M366 258 H400"/><path d="M330 176 c-16-18 16-30 0-52 M364 186 c-14-16 14-26 0-44" stroke-width="16"/></svg>CuociPasta<span id="versione" aria-hidden="true">v25</span></h1>
   <div class="pad">
     <button id="bParla" class="pad-mic" aria-label="Parla: marca e pasta"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21"/></svg></button>
     <button id="bScan" class="pad-r pad-sx" aria-label="Inquadra il codice a barre"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7V5h3M17 5h3v2M20 17v2h-3M7 19H4v-2"/><path d="M7.5 9v6M10 9v6M12.5 9v6M14 9v6M16.5 9v6"/></svg>Inquadra</button>
     <button id="bTimerLibero" class="pad-r pad-dx" aria-label="Timer libero"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="13.5" r="7"/><path d="M12 13.5V10M10 3h4M18 7l1.5-1.5"/></svg>Timer</button>
   </div>
   <button id="bAggiungi">➕ Aggiungi una pasta</button>
-  <h2>Marche</h2>
+  <h2 id="titoloMarche">Marche</h2>
   <div id="listaMarche"></div>
   <button id="bBackup">💾 Salva o ripristina elenco</button>
 </section>
