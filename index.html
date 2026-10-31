@@ -49,7 +49,7 @@ button.spento{opacity:.35;border-style:dashed}
 .pad-sx{left:0}.pad-dx{right:0}
 .pad button:focus-visible{outline:3px solid var(--crema);outline-offset:3px}
 .pad-mic:active{background:#74301F}.pad-r:active{background:#423B37}
-#titoloMarche{margin-top:30px}
+#titoloMarche{margin-top:16px}
 #bAggiungi{background:#36302D;width:100%;box-sizing:border-box;border:none;text-align:center;display:flex;align-items:center;justify-content:center}
 #bAggiungi .piu,#bBackup .piu{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;background:#5E2618;border:2px solid #D9A090;color:var(--crema);font-size:22px;font-weight:700;line-height:1;margin-right:12px;box-sizing:border-box}
 #listaMarche button{background:#36302D;border:none}
@@ -62,6 +62,11 @@ section>.riga:last-child{margin-top:auto;padding-top:10px}
 .indietro,.home,#bQuanto,#bAzzera,#bRiavvia{background:#36302D;border:none;display:flex;align-items:center;justify-content:center;text-align:center}
 .cer{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;background:#5E2618;border:2px solid #D9A090;box-sizing:border-box;margin-right:12px;flex:none}
 .cer svg{width:15px;height:15px;fill:none;stroke:var(--crema);stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+#listaElenco .voce2{background:#36302D;border-radius:10px;min-height:46px;display:flex;align-items:center;gap:8px;padding:4px 4px 4px 14px;margin-bottom:8px;font-weight:600}
+#listaElenco .voce2 .nm{flex:1}
+#listaElenco .ch{width:auto;min-width:72px;min-height:44px;margin:0;padding:4px 8px;background:#4A3F3A;border:none;border-radius:8px;text-align:center;line-height:1.1;font-size:16px}
+#listaElenco .ch small{display:block;font-size:12px;color:#D9A090;font-weight:500}
+#bModPasta{background:#36302D;border:none;display:flex;align-items:center;justify-content:center}
 #listaElenco button.voce{background:#36302D;border:none;display:flex;align-items:center}
 #listaElenco .min{margin-left:auto;padding-left:10px;color:#D9A090;font-weight:500}
 .blocco{position:relative;height:258px;margin-bottom:10px}
@@ -81,7 +86,7 @@ section>.riga:last-child{margin-top:auto;padding-top:10px}
 <button id="bannerTimer" class="primario" hidden></button>
 
 <section id="home">
-  <h1 class="titolo"><svg class="logo" viewBox="100 100 312 272" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="22" stroke-linecap="round" stroke-linejoin="round"><path d="M222 228 L186 128 M246 228 L226 116 M270 228 L262 122"/><path d="M124 228 H388"/><path d="M146 228 V318 a42 42 0 0 0 42 42 H324 a42 42 0 0 0 42-42 V228"/><path d="M146 258 H112 M366 258 H400"/><path d="M330 176 c-16-18 16-30 0-52 M364 186 c-14-16 14-26 0-44" stroke-width="16"/></svg>CuociPasta<span id="versione" aria-hidden="true">v34</span></h1>
+  <h1 class="titolo"><svg class="logo" viewBox="100 100 312 272" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="22" stroke-linecap="round" stroke-linejoin="round"><path d="M222 228 L186 128 M246 228 L226 116 M270 228 L262 122"/><path d="M124 228 H388"/><path d="M146 228 V318 a42 42 0 0 0 42 42 H324 a42 42 0 0 0 42-42 V228"/><path d="M146 258 H112 M366 258 H400"/><path d="M330 176 c-16-18 16-30 0-52 M364 186 c-14-16 14-26 0-44" stroke-width="16"/></svg>CuociPasta<span id="versione" aria-hidden="true">v36</span></h1>
   <div class="pad">
     <button id="bParla" class="pad-mic" aria-label="Parla: marca e pasta"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21"/></svg></button>
     <button id="bScan" class="pad-r pad-sx" aria-label="Inquadra il codice a barre"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7V5h3M17 5h3v2M20 17v2h-3M7 19H4v-2"/><path d="M7.5 9v6M10 9v6M12.5 9v6M14 9v6M16.5 9v6"/></svg>Inquadra</button>
@@ -107,7 +112,6 @@ section>.riga:last-child{margin-top:auto;padding-top:10px}
   <div id="schedaBottoni"></div>
   <button id="bRileggi">🔊 Rileggi</button>
   <button id="bModifica">✏️ Modifica</button>
-  <button id="bElimina" class="pericolo">🗑 Elimina</button>
   <div class="riga"><button class="indietro"><span class="cer" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6"/></svg></span>Indietro</button><button class="home"><span class="cer" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 11l8-7 8 7M6 10v9h12v-9"/></svg></span>Home</button></div>
 </section>
 
@@ -120,6 +124,7 @@ section>.riga:last-child{margin-top:auto;padding-top:10px}
   </div>
   <div class="riga"><button id="bAzzera">↺ Azzera</button><button id="bRiavvia">⟳ Riavvia</button></div>
   <button id="bQuanto"><span class="cer" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9zM16 9a4 4 0 0 1 0 6"/></svg></span>Quanto manca?</button>
+  <button id="bModPasta" hidden><span class="cer" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16zM13 7l4 4"/></svg></span>Modifica pasta</button>
   <div class="riga"><button class="indietro"><span class="cer" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6"/></svg></span>Indietro</button><button class="home"><span class="cer" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 11l8-7 8 7M6 10v9h12v-9"/></svg></span>Home</button></div>
 </section>
 
@@ -151,6 +156,7 @@ section>.riga:last-child{margin-top:auto;padding-top:10px}
   <div class="campo"><label for="fNote">Note</label><textarea id="fNote" rows="2"></textarea></div>
   <p class="nota" id="fEan"></p>
   <button class="primario" id="bSalva">💾 Salva</button>
+  <button id="bElimina" class="pericolo">🗑 Elimina pasta</button>
   <div class="riga"><button class="indietro"><span class="cer" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6"/></svg></span>Annulla</button><button class="home"><span class="cer" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 11l8-7 8 7M6 10v9h12v-9"/></svg></span>Home</button></div>
 </section>
 
@@ -267,11 +273,19 @@ function mostra(id,push=true){
   document.querySelectorAll('section').forEach(s=>s.hidden=s.id!==id);
   if(push){profondita++;history.pushState({s:id,d:profondita},'');}
   if(id==='home')renderHome();
+  bloccaHome();
   aggiornaBanner();
   if(id==='scheda'&&!renderScheda()){mostra('home',false);return;}
   window.scrollTo(0,0);
   const h=document.querySelector('#'+id+' h1, #'+id+' h2');if(h){h.tabIndex=-1;h.focus();}
 }
+// La home sta tutta nello schermo: se l'ultimo tasto è visibile, la pagina non deve poter scorrere
+function bloccaHome(){
+  const h=!$('home').hidden&&$('bBackup').getBoundingClientRect().bottom+window.scrollY<=window.innerHeight;
+  document.documentElement.style.overflow=h?'hidden':'';document.body.style.overflow=h?'hidden':'';
+  if(h)window.scrollTo(0,0);
+}
+window.addEventListener('resize',()=>bloccaHome());
 let profondita=0;
 history.replaceState({s:'home',d:0},'');
 window.addEventListener('popstate',e=>{profondita=(e.state&&e.state.d)||0;mostra((e.state&&e.state.s)||'home',false);});
@@ -295,15 +309,43 @@ function apriMarca(m){
 function mostraElenco(lista,conMarca){
   const box=$('listaElenco');box.innerHTML='';
   lista.forEach(p=>{
-    const b=btn('',()=>apriScheda(p.id));b.classList.add('voce');
-    const n=document.createElement('span');n.textContent=(conMarca?p.marca+' – ':'')+p.nome;
-    const m=document.createElement('span');m.className='min';m.textContent=p.cottura+' min';
-    b.append(n,m);b.setAttribute('aria-label',n.textContent+', '+p.cottura+' minuti');box.appendChild(b);
+    const nome=(conMarca?p.marca+' – ':'')+p.nome;
+    if(p.alDente){
+      // due tempi: riga con nome e due tasti, al dente e cottura
+      const riga=document.createElement('div');riga.className='voce2';
+      const n=document.createElement('span');n.className='nm';n.textContent=nome;n.setAttribute('aria-hidden','true');
+      const mk=(et,min,ad)=>{const c=btn('',()=>apriTimerPasta(p,min,ad));c.className='ch';
+        c.innerHTML='<small>'+et+'</small>'+min+' min';c.setAttribute('aria-label',nome+', '+et+' '+min+' minuti');return c;};
+      riga.append(n,mk('al dente',p.alDente,true),mk('cottura',p.cottura,false));box.appendChild(riga);
+    }else{
+      const b=btn('',()=>apriTimerPasta(p,p.cottura,false));b.classList.add('voce');
+      const n=document.createElement('span');n.textContent=nome;
+      const m=document.createElement('span');m.className='min';m.textContent=p.cottura+' min';
+      b.append(n,m);b.setAttribute('aria-label',nome+', '+p.cottura+' minuti');box.appendChild(b);
+    }
   });
   mostra('elenco');
 }
 
-/* ---------- scheda ---------- */
+/* ---------- pasta -> timer ---------- */
+// Apre il timer fermo già regolato per la pasta. Se un timer è già in corso, apre quello senza perderlo.
+function apriTimerPasta(p,min,alDente,push=true){
+  if(T.stato!=='fermo'){mostra('timer',push);parla('C\'è già un timer in corso.');return;}
+  fermaIntervalli();T.stato='fermo';T.min=min;T.pastaId=p.id;T.alDente=alDente;
+  T.nome=p.nome+' '+p.marca+(alDente?' – al dente':'');
+  $('timerNome').textContent=T.nome;aggiornaUI();mostra('timer',push);
+  parla(T.nome+'. '+minuti(min)+'. Premi Avvia.');
+}
+// Da voce e codice a barre: un solo tempo -> timer; anche al dente -> riga con i due tempi da scegliere
+function apriPasta(id){
+  const p=paste.find(x=>x.id===id);if(!p)return;
+  if(p.alDente){$('titoloElenco').textContent=p.marca;mostraElenco([p],false);
+    parla(p.nome+' '+p.marca+'. Al dente '+minuti(p.alDente)+', cottura '+minuti(p.cottura)+'. Scegli.');}
+  else apriTimerPasta(p,p.cottura,false);
+}
+$('bModPasta').onclick=()=>{const p=paste.find(x=>x.id===T.pastaId);if(p)apriModifica(p);};
+
+/* ---------- scheda (non più usata) ---------- */
 function apriScheda(id){corrente=id;mostra('scheda');leggiScheda();}
 function renderScheda(){
   const p=paste.find(x=>x.id===corrente);if(!p)return false;
@@ -330,7 +372,7 @@ $('bElimina').onclick=()=>{
   const p=paste.find(x=>x.id===corrente);if(!p)return;
   if(!confirm('Eliminare '+p.marca+' '+p.nome+'?'))return;
   paste=paste.filter(x=>x.id!==p.id);salva(paste);
-  try{const e=new Set(leggiJSON(CHIAVE_ELIM,[]));e.add(p.id);localStorage.setItem(CHIAVE_ELIM,JSON.stringify([...e]));}catch(err){}parla('Eliminata.');mostra('home');
+  try{const e=new Set(leggiJSON(CHIAVE_ELIM,[]));e.add(p.id);localStorage.setItem(CHIAVE_ELIM,JSON.stringify([...e]));}catch(err){}parla('Eliminata.');if(T.pastaId===p.id)T.pastaId=null;vaiHome();
 };
 
 /* ---------- aggiungi / modifica ---------- */
@@ -340,6 +382,7 @@ function apriModifica(p,pref){
   eanInAttesa=(pref&&pref.ean)||null;
   $('fEan').textContent=eanInAttesa?'Codice a barre: '+eanInAttesa:'';
   $('modTitolo').textContent=p?'Modifica pasta':'Nuova pasta';
+  $('bElimina').hidden=!p;
   $('fMarca').value=p?p.marca:((pref&&pref.marca)||'');
   $('fNome').value=p?p.nome:((pref&&pref.nome)||'');
   $('fCottura').value=p?p.cottura:'';
@@ -359,7 +402,15 @@ $('bSalva').onclick=()=>{
   if(eanInAttesa)associa(corrente,eanInAttesa);
   eanInAttesa=null;
   salva(paste);
-  history.replaceState({s:'scheda',d:profondita},'');mostra('scheda',false);parla('Salvata. '+marca+', '+nome+', '+minuti(cot)+'.');
+  parla('Salvata. '+marca+', '+nome+', '+minuti(cot)+'.');
+  const ps=paste.find(x=>x.id===corrente);
+  if(T.stato!=='fermo'){history.back();return;}          // timer in corso: torna dove eri
+  if(T.pastaId===ps.id){   // modificata dal timer: aggiorna il timer fermo e torna indietro alla sua pagina
+    const ad=T.alDente&&!!ps.alDente;T.alDente=ad;T.min=ad?ps.alDente:ps.cottura;
+    T.nome=ps.nome+' '+ps.marca+(ad?' – al dente':'');$('timerNome').textContent=T.nome;aggiornaUI();history.back();return;}
+  history.replaceState({s:'timer',d:profondita},'');
+  if(ps.alDente){$('titoloElenco').textContent=ps.marca;history.replaceState({s:'elenco',d:profondita},'');mostraElenco([ps],false);}
+  else apriTimerPasta(ps,ps.cottura,false,false);
 };
 
 /* ---------- ricerca vocale ---------- */
@@ -424,9 +475,9 @@ function interpreta(alt){
   const testo=alt[0]||'';
   const w=norm(testo);
   const iT=w.indexOf('timer');
-  if(iT>=0){const n=w.slice(iT+1).find(x=>/^\d+$/.test(x));if(n){avviaTimer(parseInt(n,10),'');return;}}
+  if(iT>=0){const n=w.slice(iT+1).find(x=>/^\d+$/.test(x));if(n){T.pastaId=null;avviaTimer(parseInt(n,10),'');return;}}
   let ris=[];for(const a of alt){ris=cerca(a);if(ris.length)break;}
-  if(ris.length===1){apriScheda(ris[0].id);return;}
+  if(ris.length===1){apriPasta(ris[0].id);return;}
   if(ris.length>1){
     $('titoloElenco').textContent='Ho trovato '+ris.length+' paste';
     mostraElenco(ris,true);
@@ -440,7 +491,7 @@ $('bParla').onclick=ascolta;
 
 /* ---------- timer ---------- */
 // stato: 'fermo' (azzerato) | 'corre' | 'pausa' | 'allarme'
-const T={stato:'fermo',fine:0,pausa:0,min:0,nome:'',avvisato:false,int:null,allarme:null,giri:0};
+const T={pastaId:null,stato:'fermo',fine:0,pausa:0,min:0,nome:'',avvisato:false,int:null,allarme:null,giri:0};
 let audioCtx=null,wakeLock=null;
 function sbloccaAudio(){try{audioCtx=audioCtx||new(window.AudioContext||window.webkitAudioContext)();if(audioCtx.state==='suspended')audioCtx.resume();}catch(e){}}
 function beep(){
@@ -467,6 +518,7 @@ function aggiornaUI(){
   const st={corre:[ICO_PAUSA,'Ferma','Ferma'],pausa:[ICO_PLAY,'Riprendi','Riprendi'],fermo:[ICO_PLAY,'Avvia','Avvia'],allarme:[ICO_STOP,'Ferma','Ferma allarme']}[T.stato];
   $('bFerma').innerHTML=st[0]+'<span>'+st[1]+'</span>';$('bFerma').setAttribute('aria-label',st[2]);
   $('tempo').textContent=mmss(restante());
+  $('bModPasta').hidden=!T.pastaId;
   const bloccati=T.stato==='corre'||T.stato==='allarme';
   ['bAzzera','bRiavvia'].forEach(id=>{$(id).classList.toggle('spento',bloccati);$(id).setAttribute('aria-disabled',bloccati);});
   aggiornaBanner();
@@ -476,7 +528,7 @@ function partenza(ms){T.fine=Date.now()+ms;T.avvisato=ms<=60000;T.stato='corre';
 function avviaTimer(min,nome){
   sbloccaAudio();fermaIntervalli();
   T.min=min;T.nome=nome;
-  $('timerNome').textContent=nome?'Timer: '+nome:'Timer libero';
+  $('timerNome').textContent=nome||'Timer libero';
   partenza(min*60000);
   if($('timer').hidden)mostra('timer');
   parla('Timer avviato: '+minuti(min)+(nome?', '+nome:'')+'.');
@@ -545,7 +597,7 @@ function mostraMinLiberi(voce){$('minLiberi').textContent=minLiberi;if(voce)parl
 // Timer libero = stessa pagina del timer, ferma a 8 minuti. Se c'è già un timer attivo, apre quello senza perderlo.
 $('bTimerLibero').onclick=()=>{
   if(T.stato!=='fermo'){mostra('timer');quanto();return;}
-  fermaIntervalli();T.stato='fermo';T.min=8;T.nome='';
+  fermaIntervalli();T.stato='fermo';T.min=8;T.nome='';T.pastaId=null;
   $('timerNome').textContent='Timer libero';aggiornaUI();mostra('timer');
   parla('Timer libero: 8 minuti. Usa meno uno e più uno, poi Avvia.');
 };
@@ -599,7 +651,7 @@ $('bLuce').onclick=async()=>{
 };
 async function trovatoCodice(code){
   const p=paste.find(x=>(x.ean||[]).includes(code));
-  if(p){history.replaceState({s:'home',d:profondita},'');apriScheda(p.id);return;}
+  if(p){history.replaceState({s:'home',d:profondita},'');apriPasta(p.id);return;}
   parla('Codice letto. Cerco il prodotto.');
   let info=null;
   try{
@@ -623,7 +675,7 @@ async function trovatoCodice(code){
   if(cand.length){
     $('titoloElenco').textContent='È una di queste?';
     const box=$('listaElenco');box.innerHTML='';
-    cand.forEach(x=>box.appendChild(btn(x.marca+' – '+x.nome+' · '+x.cottura+' min',()=>{associa(x.id,code);apriScheda(x.id);})));
+    cand.forEach(x=>box.appendChild(btn(x.marca+' – '+x.nome+' · '+x.cottura+' min',()=>{associa(x.id,code);apriPasta(x.id);})));
     box.appendChild(btn('➕ No, è una pasta nuova',()=>apriModifica(null,{...info,ean:code})));
     mostra('elenco');
     parla(frase+' È una di queste? '+cand.map(x=>x.marca+' '+x.nome).join(', ')+'. Oppure è una pasta nuova.');
@@ -654,6 +706,7 @@ $('fileImporta').onchange=e=>{
 
 /* ---------- avvio ---------- */
 renderHome();
+bloccaHome();
 if('serviceWorker' in navigator){
   let ricaricato=false;
   navigator.serviceWorker.addEventListener('controllerchange',()=>{if(!ricaricato){ricaricato=true;location.reload();}});
