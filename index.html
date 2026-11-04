@@ -13,7 +13,6 @@
 html,body{background:#000;color:var(--crema);margin:0}
 :root{--crema:#F1E1C6;--accento:#C47A62;--bordo:#5E2A1C;--primario:#74301F;--scuro:#1A1310}
 body{font-family:system-ui,Roboto,Arial,sans-serif;font-size:17px;line-height:1.3;padding:8px 12px 8px}
-html,body{overscroll-behavior:none}
 h1{font-size:22px;color:var(--accento);margin:4px 0 10px}
 h1.titolo{display:flex;align-items:baseline;gap:10px}
 .logo{width:34px;height:30px;flex:none;align-self:baseline;position:relative;top:2px}
@@ -59,6 +58,8 @@ html{height:100%}
 body{min-height:100%;box-sizing:border-box;display:flex;flex-direction:column}
 section{flex:1 0 auto;display:flex;flex-direction:column}
 section>.riga:last-child{margin-top:auto;padding-top:10px}
+section>.fondo{margin-top:auto;padding-top:10px}
+.fondo .riga{margin:0}
 .indietro,.home,#bQuanto,#bAzzera,#bRiavvia{background:#36302D;border:none;display:flex;align-items:center;justify-content:center;text-align:center}
 .cer{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;background:#5E2618;border:2px solid #D9A090;box-sizing:border-box;margin-right:12px;flex:none}
 .cer svg{width:15px;height:15px;fill:none;stroke:var(--crema);stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
@@ -86,7 +87,7 @@ section>.riga:last-child{margin-top:auto;padding-top:10px}
 <button id="bannerTimer" class="primario" hidden></button>
 
 <section id="home">
-  <h1 class="titolo"><svg class="logo" viewBox="100 100 312 272" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="22" stroke-linecap="round" stroke-linejoin="round"><path d="M222 228 L186 128 M246 228 L226 116 M270 228 L262 122"/><path d="M124 228 H388"/><path d="M146 228 V318 a42 42 0 0 0 42 42 H324 a42 42 0 0 0 42-42 V228"/><path d="M146 258 H112 M366 258 H400"/><path d="M330 176 c-16-18 16-30 0-52 M364 186 c-14-16 14-26 0-44" stroke-width="16"/></svg>CuociPasta<span id="versione" aria-hidden="true">v37</span></h1>
+  <h1 class="titolo"><svg class="logo" viewBox="100 100 312 272" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="22" stroke-linecap="round" stroke-linejoin="round"><path d="M222 228 L186 128 M246 228 L226 116 M270 228 L262 122"/><path d="M124 228 H388"/><path d="M146 228 V318 a42 42 0 0 0 42 42 H324 a42 42 0 0 0 42-42 V228"/><path d="M146 258 H112 M366 258 H400"/><path d="M330 176 c-16-18 16-30 0-52 M364 186 c-14-16 14-26 0-44" stroke-width="16"/></svg>CuociPasta<span id="versione" aria-hidden="true">v39</span></h1>
   <div class="pad">
     <button id="bParla" class="pad-mic" aria-label="Parla: marca e pasta"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21"/></svg></button>
     <button id="bScan" class="pad-r pad-sx" aria-label="Inquadra il codice a barre"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7V5h3M17 5h3v2M20 17v2h-3M7 19H4v-2"/><path d="M7.5 9v6M10 9v6M12.5 9v6M14 9v6M16.5 9v6"/></svg>Inquadra</button>
@@ -124,8 +125,10 @@ section>.riga:last-child{margin-top:auto;padding-top:10px}
   </div>
   <div class="riga"><button id="bAzzera">↺ Azzera</button><button id="bRiavvia">⟳ Riavvia</button></div>
   <button id="bQuanto"><span class="cer" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9zM16 9a4 4 0 0 1 0 6"/></svg></span>Quanto manca?</button>
+  <div class="fondo">
   <button id="bModPasta" hidden><span class="cer" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16zM13 7l4 4"/></svg></span>Modifica pasta</button>
   <div class="riga"><button class="indietro"><span class="cer" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6"/></svg></span>Indietro</button><button class="home"><span class="cer" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 11l8-7 8 7M6 10v9h12v-9"/></svg></span>Home</button></div>
+  </div>
 </section>
 
 <section id="scan" hidden>
